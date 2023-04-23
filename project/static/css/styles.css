@@ -1,0 +1,108 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-weight: normal;
+}
+
+.grades-input {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 10px;
+  word-wrap: break-word;
+  word-break: break-all;
+  grid-template-rows: minmax(60px, auto) repeat(5, 100px);
+  color: white;
+}
+
+label {
+  color: white;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  background: rgb(48, 48, 48);
+}
+
+.grades-app {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  min-height: 100vh;
+  grid-template-columns: repeat(5, 125px);
+  grid-template-rows: minmax(60px, auto) repeat(5, 100px);
+}
+
+.grades-app > button {
+  cursor: pointer;
+  font-size: 1.25rem;
+  border: 1px solid black;
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.75);
+}
+
+.span-two {
+  grid-column: span 2;
+}
+
+.grades-output {
+  grid-column: 1 / -1;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  flex-direction: column;
+  padding: 10px;
+  font-size: 1.5rem;
+  word-wrap: break-word;
+  word-break: break-all;
+  grid-template-rows: minmax(60px, auto) repeat(5, 100px);
+  color: white;
+}
+
+.tableFixHead {
+  grid-column: 1 / -1;
+  overflow-y: auto; /* make the table scrollable if height is more than 200 px  */
+  height: 300px; /* gives an initial height of 200px to the table */
+  width: 500px;
+}
+.tableFixHead thead th {
+  position: sticky; /* make the table heads sticky */
+  top: 0px; /* table head will be placed from the top of the table and sticks to it */
+  color: white;
+}
+
+table {
+  border-collapse: collapse; /* make the table borders collapse to each other */
+  width: 100%;
+  background-color: lightgray;
+  color: black;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 12px 16px;
+  border: 1px solid black;
+}
+th {
+  background: black;
+}
+
+tbody tr {
+  border-bottom: 1px solid black;
+}
+
+tbody tr:nth-of-type(even) {
+  background-color: black;
+}
+
+tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}

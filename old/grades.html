@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>GradesApp</title>
+    <link
+      href="{{url_for('static', filename='css/styles.css')}}"
+      rel="stylesheet"
+    />
+    <script src="{{url_for('static', filename='js/script.js')}}" defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="grades-app">
+      <div class="grades-input">
+        <label>Student Name</label>
+        <input
+          type="string"
+          id="fld-student-name"
+          name="fld-student-name"
+          value="Joe"
+        />
+        <label>Grade</label>
+        <input
+          type="float"
+          id="fld-student-grade"
+          name="fld-student-grade"
+          value="10"
+        />
+      </div>
+      <div class="grades-output" id="div-grades-output"></div>
+      <button type="button" , id="btn-get-students">
+        Refresh Student List
+      </button>
+      <button type="button" , id="btn-get-grade">Get Student Grade</button>
+      <button type="button" , id="btn-add-grade">Add New</button>
+      <button type="button" , id="btn-edit-grade">Edit Grade</button>
+      <button type="button" , id="btn-del-grade">Delete Student</button>
+      <div class="tableFixHead">
+        <table id="grades-table">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Grade</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

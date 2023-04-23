@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/courseGrade.js') }}"></script>
+<script>
+  let courseId = "{{ c_id }}";
+  let course = "{{ course }}";
+</script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/courses.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+{% endblock %}
+<h1 class="title">Welcome, {{ current_user.name }}!</h1>
+<hr class="rounded" />
+
+<div class="tab">
+  <button class="tablinks" onclick="goBack()">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <button
+    class="tablinks"
+    onclick="courseTabs(event, 'CourseGrades')"
+    id="courseGrades"
+  >
+    {{ course }}
+  </button>
+  <button class="tablinks" id="btn-save-grades">Save Grades</button>
+</div>
+<div id="CourseGrades" class="tabcontent">
+  <div class="tableFixHead">
+    <table id="grades-table">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Grade</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+<script>
+  document.getElementById("courseGrades").click();
+</script>
+{% endblock %}
