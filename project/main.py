@@ -15,7 +15,7 @@ main = Blueprint('main', __name__)
 @main.route('/reload_server', methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo('git@github.com:CybrNight/CSE106-Forum.git')
+        repo = git.Repo('./CSE106-Forum')
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
