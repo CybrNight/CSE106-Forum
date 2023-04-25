@@ -5,11 +5,26 @@ from . import db
 from .models import Course, User, Enrollment
 from flask import jsonify
 from .role import Role
+import git
 
 main = Blueprint('main', __name__)
 
+# Route to update the reload the server with latest repo changes if any
+
+
+@main.route('/reload_server', methods=['POST'])
+def webhook():
+    if request.method == 'POST':
+        repo = git.Repo('git@github.com:CybrNight/CSE106-Forum.git')
+        origin = repo.remotes.origin
+        origin.pull()
+        return 'Updated PythonAnywhere successfully', 200
+    else:
+        return 'Wrong event type', 400
 
 # Main view
+
+
 @ main.route('/')
 def index():
     if not current_user.is_authenticated:
