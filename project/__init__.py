@@ -153,3 +153,6 @@ def rebuild(random=False):
                         email="admin@me.com"))
 
     db.session.commit()
+
+
+flask_app = create_app()
