@@ -4,8 +4,9 @@ from sqlalchemy import event
 from flask_admin.contrib.sqla import ModelView
 from werkzeug.security import generate_password_hash
 import uuid
-from .role import Role
+from .enums import Role, TagType
 from random import randint
+from datetime import datetime
 
 
 class Enrollment(db.Model):
@@ -28,6 +29,21 @@ class Enrollment(db.Model):
         return f"{self.course}  {self.user}"
 
 
+tags = db.Table("post_tags",
+                db.Column("tag_id", db.Integer, db.ForeignKey(
+                    "tag.id"), primary_key=True),
+                db.Column("post_id", db.Integer, db.ForeignKey(
+                    "post.id"), primary_key=True)
+                )
+
+authors = db.Table("post_authors",
+                   db.Column("user_id", db.Integer, db.ForeignKey(
+                       "user.id"), primary_key=True),
+                   db.Column("post_id", db.Integer, db.ForeignKey(
+                       "post.id"), primary_key=True)
+                   )
+
+
 class User(UserMixin, db.Model):
     # primary keys are required by SQLAlchemy
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +54,8 @@ class User(UserMixin, db.Model):
     role = db.Column(db.Enum(Role))
     enrollment = db.relationship(
         "Enrollment", back_populates="user", lazy="joined", cascade='all, delete-orphan')
+    posts = db.relationship("Post", secondary=authors,
+                            lazy="subquery", backref=db.backref('authors', lazy=True))
 
     def is_admin(self):
         return self.role == Role.ADMIN
@@ -45,7 +63,7 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return self.name
 
-    def __init__(self, name, email="default", password="123", role=Role.STUDENT):
+    def __init__(self, name, email="default", password="123", role=Role.DEFAULT):
         self.name = name
         self.email = email
         self.password = password
@@ -70,6 +88,57 @@ class User(UserMixin, db.Model):
             else:
                 self.email = self.name.lower()
             self.email += "@me.com"
+
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String, unique=True)
+    title = db.Column(db.String, unique=True)
+    post_text = db.Column(db.VARCHAR)
+    # author = db.relationship
+    date = db.Column(db.DateTime)
+    upvotes = db.Column(db.Integer)
+    downvotes = db.Column(db.Integer)
+    tags = db.relationship("Tag", secondary=tags,
+                           lazy="subquery", backref=db.backref('posts', lazy=True))
+
+    def __init__(self, name):
+        self.title = name
+        self.date = datetime.now().date()
+
+        self.upvotes = 0
+        self.downvotes = 0
+
+        temp = uuid.uuid4().hex[:8]
+        exists = db.session.query(Course.course_id).filter_by(
+            course_id=temp).first() is not None
+
+        while exists:
+            temp = uuid.uuid4().hex[:8]
+
+        self.uuid = temp
+        db.session.commit()
+
+    def upvote(self):
+        self.upvotes += 1
+
+    def downvote(self):
+        self.downvotes += 1
+
+    def absvotes(self):
+        return self.upvotes + self.downvotes
+
+
+class Tag(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.Enum(TagType))
+
+    def __init__(self, type):
+        self.type = type
+
+
+class Reply(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
 
 
 class Course(db.Model):
@@ -106,7 +175,7 @@ class Course(db.Model):
     # Update the enroll count
     def set_enroll_count(self):
         enrollment = Enrollment.query.join(Course).join(User).filter(
-            (User.role == Role.STUDENT) & (Course.name == self.name)).all()
+            (User.role == Role.DEFAULT) & (Course.name == self.name)).all()
         self.enrolled = len(enrollment)
 
     # Update the professor name

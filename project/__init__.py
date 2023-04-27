@@ -3,12 +3,33 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from random import randint
+from random import randint, choice
+import requests
 
-from project.role import Role
+from project.enums import Role, TagType
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
+lorem = "https://baconipsum.com/api/?type=meat-and-filler"
+
+
+def create_posts():
+    from .models import User, Post, Tag
+
+    posts = {}
+
+    for i in range(0, 10):
+        type = choice(list(TagType))
+        posts.update({Post(name=f"Post{i+1}"): Tag(type=type)})
+
+    post_text = requests.get(url=lorem)
+    user = User.query.first()
+    for post, tag in posts.items():
+        post.post_text = choice(list(post_text.json()))
+        post.tags.append(tag)
+        user.posts.append(post)
+        db.session.add_all([post, tag])
+    db.session.commit()
 
 
 def create_users():
@@ -82,7 +103,7 @@ def create_random_users():
 
     for i in range(0, 16):
         users.append(User(
-            name=f"Student{i}", role=Role.STUDENT))
+            name=f"Student{i}", role=Role.DEFAULT))
 
     for i in range(1, len(profs)-1):
         db.session.add(courses[i])
@@ -138,7 +159,7 @@ def create_app():
 
 
 def rebuild(random=False):
-    from .models import User, Course, Enrollment
+    from .models import User
     app = create_app()
     app.app_context().push()
     db.drop_all()
@@ -148,6 +169,8 @@ def rebuild(random=False):
         create_random_users()
     else:
         create_users()
+
+    create_posts()
 
     db.session.add(User(role=Role.ADMIN, name="ADMIN",
                         email="admin@me.com"))
