@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from random import randint, choice
+from random import randint, choice, shuffle
 import requests
 import os
 
@@ -22,20 +22,39 @@ def create_posts():
     with open(path, 'r') as file:
         post_text = file.read()
 
-    from .models import User, Post, Tag
+    from .models import User, Post, Tag, Reply, PostReply
 
     posts = {}
+    replies = []
+    reply_content = ["Jacob quickly double sucked my favorite corpse",
+                     "The humongous Steve slurped ass'", "The dude around the corner quickly touched himself to your brothers friends"]
+    users = User.query.all()
 
-    for i in range(0, 10):
+    for i in range(0, 25):
         type = choice(list(TagType))
-        posts.update({Post(name=f"Post{i+1}"): Tag(type=type)})
+        posts.update({Post(title=f"Post{i+1}"): Tag(type=type)})
 
-    user = User.query.first()
-    for post, tag in posts.items():
+        for j in range(0, 5):
+            replies.append(Reply(content=choice(reply_content)))
+
+    for user in users:
+        if not len(posts) > 0:
+            continue
+
+        post, tag = choice(list(posts.items()))
+        del posts[post]
         post.content = post_text
         post.tags.append(tag)
         user.posts.append(post)
         db.session.add_all([post, tag])
+        if len(replies) > 0:
+            a = randint(2, 4)
+            for j in range(1, a):
+                shuffle(replies)
+                reply = replies.pop()
+                reply.content = choice(reply_content)
+                db.session.add_all([user, post, reply])
+                db.session.add(PostReply(user=user, post=post, reply=reply))
     db.session.commit()
 
 

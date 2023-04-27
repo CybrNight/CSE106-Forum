@@ -7,7 +7,7 @@ class PostView {
 
     async getPostContent() {
         let response = await fetch("/getpost", {
-            method: "POST"
+            method: "GET"
         });
 
         if (response.ok) {

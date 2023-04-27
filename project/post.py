@@ -2,7 +2,7 @@ from http.client import HTTPException
 from flask import Blueprint, abort, redirect, render_template, request, url_for
 from flask_login import login_required, fresh_login_required, current_user
 from . import db
-from .models import Post, User, Reply
+from .models import Post, PostReply, User, Reply
 from flask import jsonify
 from project.enums import Role
 import git
@@ -15,14 +15,22 @@ def testpost():
     return redirect(url_for("post.get_post", title="Post1"))
 
 
-@post.route("/posts/<title>", methods=['GET', 'POST'])
-def get_post(title):
+@post.route("/posts/<p_title>", methods=['GET', 'POST'])
+def get_post(p_title):
     if request.method == 'GET':
-        post = Post.query.filter_by(title=title).first()
+        # Query join of Post and PostReply to get post with title and its replies
+        post = Post.query.join(PostReply).filter(Post.title == p_title).first()
 
         if post:
-            post_data = {"title": post.title, "content": post.content}
-            return render_template("view_post.html", data=post_data)
+            replies = []
+            for p_reply in post.post_replies:
+                user, _, reply = p_reply.get()
+                replies.append({"author": user.name, "content": reply.content})
+            post_data = {"title": post.title,
+                         "content": post.content,
+                         "upvotes": post.upvotes,
+                         "downvotes": post.downvotes}
+            return render_template("post-view.html", data=post_data)
 
     return "Post does not exist", 404
 

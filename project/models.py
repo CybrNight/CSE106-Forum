@@ -29,19 +29,30 @@ class Enrollment(db.Model):
         return f"{self.course}  {self.user}"
 
 
+class PostReply(db.Model):
+    __tablename__ = "post_reply"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=False)
+    reply_id = db.Column(db.Integer, db.ForeignKey("reply.id"), nullable=False)
+
+    __table_args__ = (db.UniqueConstraint(user_id, post_id, reply_id),)
+
+    user = db.relationship("User", back_populates="post_replies")
+    post = db.relationship("Post", back_populates="post_replies")
+    reply = db.relationship("Reply", back_populates="post_replies")
+
+    def get(self):
+        return (self.user, self.post, self.reply)
+
+
 tags = db.Table("post_tags",
                 db.Column("tag_id", db.Integer, db.ForeignKey(
                     "tag.id"), primary_key=True),
                 db.Column("post_id", db.Integer, db.ForeignKey(
                     "post.id"), primary_key=True)
                 )
-
-authors = db.Table("post_authors",
-                   db.Column("user_id", db.Integer, db.ForeignKey(
-                       "user.id"), primary_key=True),
-                   db.Column("post_id", db.Integer, db.ForeignKey(
-                       "post.id"), primary_key=True)
-                   )
 
 
 class User(UserMixin, db.Model):
@@ -54,8 +65,10 @@ class User(UserMixin, db.Model):
     role = db.Column(db.Enum(Role))
     enrollment = db.relationship(
         "Enrollment", back_populates="user", lazy="joined", cascade='all, delete-orphan')
-    posts = db.relationship("Post", secondary=authors,
-                            lazy="subquery", backref=db.backref('authors', lazy=True))
+    post_replies = db.relationship(
+        "PostReply", back_populates="user", lazy="joined", cascade='all, delete-orphan')
+    posts = db.relationship("Post", lazy="subquery",
+                            backref=db.backref('user', lazy=True))
 
     def is_admin(self):
         return self.role == Role.ADMIN
@@ -94,19 +107,23 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String, unique=True)
     title = db.Column(db.String, unique=True)
+    author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.VARCHAR)
-    # author = db.relationship
     date = db.Column(db.DateTime)
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
     tags = db.relationship("Tag", secondary=tags,
                            lazy="subquery", backref=db.backref('posts', lazy=True))
 
-    def __init__(self, name):
-        self.title = name
+    post_replies = db.relationship(
+        "PostReply", back_populates="post", lazy="joined", cascade='all, delete-orphan')
+
+    def __init__(self, title, content=""):
+        self.title = title
+        self.content = content
         self.date = datetime.now().date()
 
-        self.upvotes = 0
+        self.upvotes = 1
         self.downvotes = 0
 
         temp = uuid.uuid4().hex[:8]
@@ -123,10 +140,11 @@ class Post(db.Model):
         self.upvotes += 1
 
     def downvote(self):
-        self.downvotes += 1
+        self.downvote += 1
 
-    def absvotes(self):
-        return self.upvotes + self.downvotes
+    @property
+    def total_votes(self):
+        return self.upvotes - self.downvotes
 
 
 class Tag(db.Model):
@@ -139,6 +157,26 @@ class Tag(db.Model):
 
 class Reply(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.VARCHAR())
+    upvotes = db.Column(db.Integer)
+    downvotes = db.Column(db.Integer)
+    post_replies = db.relationship(
+        "PostReply", back_populates="reply", lazy="joined", cascade='all, delete-orphan')
+
+    def __init__(self, content=""):
+        self.upvotes = 1
+        self.downvotes = 0
+        self.content = content
+
+    def upvote(self):
+        self.upvotes += 1
+
+    def downvote(self):
+        self.downvote += 1
+
+    @property
+    def total_votes(self):
+        return self.upvotes - self.downvotes
 
 
 class Course(db.Model):
