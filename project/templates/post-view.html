@@ -9,10 +9,52 @@
   href="{{ url_for('static', filename='css/posts.css') }}"
 />
 {% endblock %}
-<div class="container">
+<div class="post-container">
   <article>
-    <h2 id="post-title">{{data.title}}</h2>
+    <!--This header should be left-aligned-->
+    <h1 id="post-title">{{data.title}}</h1>
     <p id="post-content">{{data.content}}</p>
   </article>
+  <form
+    method="post"
+    action="{{ url_for('post_route.testpost', next=request.args.get('next')) }}"
+  >
+    <br />
+    <div class="field">
+      <div class="control">
+        <input
+          class="input"
+          type="text"
+          name="post-title"
+          placeholder="Post title"
+          autofocus=""
+        />
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <textarea name="Text1" cols="120" rows="5"></textarea>
+      </div>
+    </div>
+    <button class="button is-block is-info is-large is-fullwidth">
+      Add Reply
+    </button>
+  </form>
+  <br />
+  <div id="PostReplies">
+    <div class="tableFixHead">
+      <table id="replies-table">
+        <thead>
+          <tr>
+            <th>Author</th>
+            <th>Reply</th>
+            <th>Date</th>
+            <th>Upvote</th>
+            <th>Downvote</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+  </div>
   {% endblock %}
 </div>

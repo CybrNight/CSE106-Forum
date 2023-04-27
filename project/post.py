@@ -7,7 +7,7 @@ from flask import jsonify
 from project.enums import Role
 import git
 
-post = Blueprint('post_blueprint', __name__)
+post = Blueprint('post_route', __name__)
 
 
 @post.route("/testpost", methods=['GET'])
@@ -29,7 +29,8 @@ def get_post(p_title):
             post_data = {"title": post.title,
                          "content": post.content,
                          "upvotes": post.upvotes,
-                         "downvotes": post.downvotes}
+                         "downvotes": post.downvotes,
+                         "replies": replies}
             return render_template("post-view.html", data=post_data)
 
     return "Post does not exist", 404
