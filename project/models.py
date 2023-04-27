@@ -94,7 +94,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String, unique=True)
     title = db.Column(db.String, unique=True)
-    post_text = db.Column(db.VARCHAR)
+    content = db.Column(db.VARCHAR)
     # author = db.relationship
     date = db.Column(db.DateTime)
     upvotes = db.Column(db.Integer)

@@ -5,6 +5,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from random import randint, choice
 import requests
+import os
 
 from project.enums import Role, TagType
 
@@ -14,6 +15,13 @@ lorem = "https://baconipsum.com/api/?type=meat-and-filler"
 
 
 def create_posts():
+    path = os.getcwd()
+    path = os.path.join(path, "project/post.txt")
+
+    post_text = ""
+    with open(path, 'r') as file:
+        post_text = file.read()
+
     from .models import User, Post, Tag
 
     posts = {}
@@ -22,10 +30,9 @@ def create_posts():
         type = choice(list(TagType))
         posts.update({Post(name=f"Post{i+1}"): Tag(type=type)})
 
-    post_text = "POST TEXT10"
     user = User.query.first()
     for post, tag in posts.items():
-        post.post_text = post_text
+        post.content = post_text
         post.tags.append(tag)
         user.posts.append(post)
         db.session.add_all([post, tag])
