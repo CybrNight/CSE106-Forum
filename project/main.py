@@ -4,7 +4,7 @@ from flask_login import login_required, fresh_login_required, current_user
 from . import db
 from .models import Course, User, Enrollment
 from flask import jsonify
-from .role import Role
+from project.enums import Role
 import git
 
 main = Blueprint('main', __name__)
@@ -57,7 +57,7 @@ def courses():
     # Take user to the teacher or student view based on role
     if current_user.role == Role.PROFESSOR:
         return render_template('teacher.html')
-    elif current_user.role == Role.STUDENT:
+    elif current_user.role == Role.DEFAULT:
         return render_template('courses.html')
     # Anyone else gets index
     return render_template('index.html')
@@ -92,7 +92,7 @@ def course(c_id):
 def get_course_students(c_id):
     # Get all students in course by id
     enrollments = Enrollment.query.join(User).join(Course).filter(
-        (User.role == Role.STUDENT) & (Course.course_id == c_id)).all()
+        (User.role == Role.DEFAULT) & (Course.course_id == c_id)).all()
 
     if len(enrollments) == 0:
         return redirect(url_for("main.courses"))
@@ -192,7 +192,7 @@ def update_grades(c_id):
         for key, value in user.items():
             # Get each student based on incoming ids
             user = Enrollment.query.join(Course).join(User).filter(
-                (User.role == Role.STUDENT) & (User.user_id == key) & (Course.course_id == c_id)).first()
+                (User.role == Role.DEFAULT) & (User.user_id == key) & (Course.course_id == c_id)).first()
 
             if not user:
                 abort(404)
