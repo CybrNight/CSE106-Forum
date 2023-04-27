@@ -22,7 +22,7 @@ def create_posts():
         type = choice(list(TagType))
         posts.update({Post(name=f"Post{i+1}"): Tag(type=type)})
 
-    post_text = "POST TEXT"
+    post_text = "POST TEXT10"
     user = User.query.first()
     for post, tag in posts.items():
         post.post_text = post_text
