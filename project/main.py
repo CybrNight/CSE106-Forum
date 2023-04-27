@@ -58,7 +58,7 @@ def courses():
     if current_user.role == Role.PROFESSOR:
         return render_template('teacher.html')
     elif current_user.role == Role.DEFAULT:
-        return render_template('courses.html')
+        return render_template('profile.html')
     # Anyone else gets index
     return render_template('index.html')
 

@@ -31,7 +31,7 @@
                 {% if current_user.is_authenticated and not
                 current_user.is_admin() %}
                 <a href="{{ url_for('main.courses') }}" class="navbar-item">
-                  Courses
+                  Profile
                 </a>
                 {% endif %} {% if current_user.is_authenticated and
                 current_user.is_admin() %}

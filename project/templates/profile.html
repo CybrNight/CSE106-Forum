@@ -1,0 +1,31 @@
+{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/profile.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+{% endblock %}
+
+<div class="post-bio-container">
+    <div class="my-posts">
+        <h1 class="my-posts-title">My Posts</h1>
+        
+    </div>
+    <div class="bio">
+        <h1 class="bio-title">Bio</h1>
+        <div class="profile-pic-container">
+            <img class="profile-pic" src="https://www.alleycat.org/wp-content/uploads/2021/02/344x361_FoundACat.jpg" 
+                alt="profile-pic">
+        </div>
+            
+    </div>
+</div>
+
+{% endblock %}

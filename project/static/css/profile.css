@@ -1,0 +1,43 @@
+.my-posts-title {
+    font-size: 25px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.bio-title {
+    font-size: 25px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.post-bio-container {
+    display: flex;
+    position: relative;
+    margin-top: -40vh;
+}
+
+.my-posts {
+    position: relative;
+    width: 70%;
+}
+
+.bio {
+    position: relative;
+    width: 30%;
+}
+
+.profile-pic-container {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    margin-top: 1em;
+    overflow: hidden;
+}
+  
+.profile-pic {
+    border-radius: 8px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+}
+  
