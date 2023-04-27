@@ -155,6 +155,9 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .post import post as post_blueprint
+    app.register_blueprint(post_blueprint)
+
     return app
 
 
