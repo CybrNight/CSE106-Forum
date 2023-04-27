@@ -25,7 +25,7 @@ def create_posts():
     post_text = "POST TEXT"
     user = User.query.first()
     for post, tag in posts.items():
-        post.post_text = choice(list(post_text.json()))
+        post.post_text = post_text
         post.tags.append(tag)
         user.posts.append(post)
         db.session.add_all([post, tag])
