@@ -7,7 +7,7 @@ from flask import jsonify
 from project.enums import Role
 import git
 
-post = Blueprint('post', __name__)
+post = Blueprint('post_blueprint', __name__)
 
 
 @post.route("/posts", methods=['GET'])

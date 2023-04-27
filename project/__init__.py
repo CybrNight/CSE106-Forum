@@ -135,12 +135,14 @@ def create_app():
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
-    from .models import User, Course, Enrollment
+    from .models import User, Course, Enrollment, Post, Reply
     from .admin import AdminView, CourseView
 
     admin = Admin(app, name="Dashboard", index_view=AdminView(
         User, db.session, url='/admin', endpoint='admin'))
     admin.add_view(CourseView(Course, db.session))
+    admin.add_view(ModelView(Post, db.session))
+    admin.add_view(ModelView(Reply, db.session))
 
     @ login_manager.user_loader
     def load_user(user_id):
