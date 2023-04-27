@@ -10,6 +10,11 @@ import git
 post = Blueprint('post', __name__)
 
 
+@post.route("/testpost", methods=['GET'])
+def testpost():
+    return render_template("view_post.html")
+
+
 @post.route("/posts", methods=['GET'])
 def get_posts():
     return "Success!", 205
