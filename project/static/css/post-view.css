@@ -82,3 +82,27 @@ h6 {
 .post-container form {
   left: 180px;
 }
+
+main {
+  padding: 0%;
+  margin: 5%;
+  display: block;
+  min-height: 100vh;
+  min-width: 100vh;
+}
+
+.comment-section {
+  max-height: 25vh;
+  max-width: 90%;
+  background-color: #3f3f3f;
+  overflow-y: scroll;
+}
+
+.comment-container {
+  height: 10%;
+  padding: 2%;
+  margin: 2%;
+  background-color: #ffff;
+  color: red;
+  display: grid;
+}
