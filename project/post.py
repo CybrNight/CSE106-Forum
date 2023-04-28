@@ -25,13 +25,14 @@ def get_post(p_title):
             replies = []
             for p_reply in post.post_replies:
                 user, _, reply = p_reply.get()
-                replies.append({"author": user.name, "content": reply.content})
+                replies.append(
+                    {"author": user.name, "content": reply.content, "upvotes": reply.total_votes})
             post_data = {"title": post.title,
                          "content": post.content,
-                         "upvotes": post.upvotes,
-                         "downvotes": post.downvotes,
+                         "upvotes": post.total_votes,
                          "replies": replies,
                          "tags": post.tag_list}
+            print(post_data)
             return render_template("post-view.html", data=post_data)
 
     return "Post does not exist", 404
