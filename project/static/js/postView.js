@@ -1,3 +1,4 @@
+
 class PostView {
 
     constructor(postTitle, postContent) {
@@ -6,18 +7,7 @@ class PostView {
     }
 
     async getPostContent() {
-        let response = await fetch("/getpost", {
-            method: "GET"
-        });
 
-        if (response.ok) {
-            const post = await response.json();
-
-            //this.postContent.innerText = post.content;
-            //this.postTitle.innerText = post.title;
-        } else {
-            throw new InternalError(`${response.status}:Unexpected error`);
-        }
     }
 }
 

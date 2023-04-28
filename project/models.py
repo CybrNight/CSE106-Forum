@@ -146,6 +146,13 @@ class Post(db.Model):
     def total_votes(self):
         return self.upvotes - self.downvotes
 
+    @property
+    def tag_list(self):
+        tags = []
+        for tag in self.tags:
+            tags.append({"value": tag.type.value})
+        return {"tags": tags}
+
 
 class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True)
