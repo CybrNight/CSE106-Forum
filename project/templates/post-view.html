@@ -9,10 +9,7 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='css/alerts.css') }}"
 />
-{% endblock %} {% with messages = get_flashed_messages(with_categories=true) %}
-{% for category, message in messages %}
-<div class="{{ category }}">{{ message }}</div>
-{% endfor %} {% endwith %}
+{% endblock %}
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
@@ -21,6 +18,10 @@
   </article>
   <main>
     <div class="post-replies-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% for
+      category, message in messages %}
+      <div class="{{ category }}">{{ message }}</div>
+      {% endfor %} {% endwith %}
       <form
         class="post-reply-form"
         method="post"

@@ -9,26 +9,6 @@ from random import randint
 from datetime import datetime
 
 
-class Enrollment(db.Model):
-    __tablename__ = "enrollment"
-
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        "user.user_id"), nullable=False)
-    course_id = db.Column(db.Integer, db.ForeignKey(
-        "course.course_id"), nullable=False)
-
-    __table_args__ = (db.UniqueConstraint(user_id, course_id),)
-
-    user = db.relationship("User", back_populates="enrollment")
-    course = db.relationship(
-        "Course", back_populates="enrollment")
-    grade = db.Column(db.Integer)
-
-    def __repr__(self):
-        return f"{self.course}  {self.user}"
-
-
 class PostReply(db.Model):
     __tablename__ = "post_reply"
 
@@ -63,8 +43,6 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(1000))
     user_id = db.Column(db.String, unique=True)
     role = db.Column(db.Enum(Role))
-    enrollment = db.relationship(
-        "Enrollment", back_populates="user", lazy="joined", cascade='all, delete-orphan')
     post_replies = db.relationship(
         "PostReply", back_populates="user", lazy="joined", cascade='all, delete-orphan')
     posts = db.relationship("Post", lazy="subquery",
@@ -127,8 +105,8 @@ class Post(db.Model):
         self.downvotes = 0
 
         temp = uuid.uuid4().hex[:8]
-        exists = db.session.query(Course.course_id).filter_by(
-            course_id=temp).first() is not None
+        exists = db.session.query(Post.uuid).filter_by(
+            uuid=temp).first() is not None
 
         while exists:
             temp = uuid.uuid4().hex[:8]
@@ -184,74 +162,6 @@ class Reply(db.Model):
     @property
     def total_votes(self):
         return self.upvotes - self.downvotes
-
-
-class Course(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.String, unique=True)
-    name = db.Column(db.String(100), unique=True)
-    time = db.Column(db.String(100))
-    enrolled = db.Column(db.Integer)
-    max_enroll = db.Column(db.Integer)
-    prof_name = db.Column(db.String(100))
-    enrollment = db.relationship(
-        "Enrollment", back_populates="course", lazy="joined", cascade='all, delete-orphan')
-
-    def __init__(self, name, time, max_enroll=8):
-        self.name = name
-        self.time = time
-        self.enrolled = 0
-        self.prof_name = "NULL"
-        self.max_enroll = max_enroll
-
-        course_id = uuid.uuid4().hex[:8]
-        exists = db.session.query(Course.course_id).filter_by(
-            course_id=course_id).first() is not None
-
-        while exists:
-            course_id = uuid.uuid4().hex[:8]
-
-        self.course_id = course_id
-        db.session.commit()
-
-    def __repr__(self):
-        return self.name
-
-    # Update the enroll count
-    def set_enroll_count(self):
-        enrollment = Enrollment.query.join(Course).join(User).filter(
-            (User.role == Role.DEFAULT) & (Course.name == self.name)).all()
-        self.enrolled = len(enrollment)
-
-    # Update the professor name
-    def set_prof_name(self):
-        enrollment = Enrollment.query.join(Course).join(User).filter(
-            (User.role == Role.PROFESSOR) & (Course.name == self.name)).all()
-        self.prof_name = ""
-        for e in enrollment:
-            self.prof_name += str(e.user) + "\n"
-
-    def update(self):
-        self.set_enroll_count()
-        self.set_prof_name()
-
-    # Add user to course enrollment
-    def add_user(self, user, grade=-1):
-        if grade == -1:
-            grade = randint(0, 100)
-        if self.enrolled < self.max_enroll:
-            db.session.add(Enrollment(user=user, course=self, grade=grade))
-            if (user.role == Role.PROFESSOR):
-                self.prof_name = user.name
-        else:
-            raise Exception(f"Class {self} full!")
-        self.update()
-
-    # Remove user from course enrollment
-    def remove_user(self, user):
-        test = Enrollment.query.filter_by(
-            course_id=self.course_id, user_id=user.user_id).delete()
-        self.update()
 
 
 @ event.listens_for(User.password, 'set', retval=True)
