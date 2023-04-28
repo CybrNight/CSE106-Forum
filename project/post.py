@@ -9,9 +9,11 @@ from flask import jsonify
 from project.enums import Role
 import git
 
+# Creates a new flask blueprint for this file
 post = Blueprint('post_route', __name__)
 
 
+# Returns a known good post for testing
 @post.route("/testpost", methods=['GET'])
 def testpost():
     return redirect(url_for("post_route.get_post", p_title="testpost"))
@@ -25,11 +27,13 @@ def get_post(p_title):
         if p_title == "testpost":
             post = Post.query.all()[0]
         else:
+            # Grab the post with title
             post = Post.query.join(PostReply).filter(
                 Post.title == p_title).first()
 
         if post:
             replies = []
+            # For every post, get all the replies
             for p_reply in post.post_replies:
                 user, _, reply = p_reply.get()
                 replies.append(
@@ -45,19 +49,25 @@ def get_post(p_title):
     return "Post does not exist", 404
 
 
+# Route that handles adding a new reply to a post
 @post.route("/posts/<p_title>/reply", methods=['POST'])
 def add_post_reply(p_title):
+    # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
+        # Create warning message
         message = Markup(
             '<h1>You must <a href="/login">login</a> in order to reply</h1>')
         flash(message, 'error')
+
+        # Redirect user back to the post page
         return redirect(url_for("post_route.get_post", p_title=p_title))
 
+    # Get the reply content from the form
     content = request.form.get('reply-content')
     post = Post.query.join(PostReply).filter(Post.title == p_title).first()
 
+    # Create new Reply object, and add new PostReply to the database
     reply = Reply(content=content)
-
     db.session.add(PostReply(user=current_user, post=post, reply=reply))
     db.session.commit()
 
