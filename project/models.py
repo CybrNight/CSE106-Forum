@@ -109,7 +109,7 @@ class Post(db.Model):
     title = db.Column(db.String, unique=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     content = db.Column(db.VARCHAR)
-    date = db.Column(db.DateTime)
+    date = db.Column(db.String)
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
     tags = db.relationship("Tag", secondary=tags,
@@ -121,8 +121,7 @@ class Post(db.Model):
     def __init__(self, title, content=""):
         self.title = title
         self.content = content
-        self.date = datetime.now().date()
-
+        self.date = datetime.now().date().strftime("%d %b %Y")
         self.upvotes = 1
         self.downvotes = 0
 

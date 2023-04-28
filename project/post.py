@@ -65,14 +65,12 @@ def get_posts():
                 tags.append(tag.type.value)
 
             posts_data.append({"title": post.title,
-                "upvotes": post.upvotes,
-                "downvotes": post.downvotes,
+                "upvotes": post.total_votes,
                 "author": post.user.name,
                 "date": post.date,
                 "tags": tags})
         return jsonify(posts_data)
     
-        #return render_template("all-posts.html", data=posts_data)
     return "Success!", 205
 
 

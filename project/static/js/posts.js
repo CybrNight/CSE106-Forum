@@ -38,7 +38,7 @@ class CourseApp {
                 postTitleCell.innerHTML = '<a href="/posts/' + post.title + '">' + post.title + '</a>';
                 postAuthorCell.innerText = post.author;
                 postDateCell.innerText = post.date;
-                postUpvotesCell.innerText = post.upvotes + post.downvotes;
+                postUpvotesCell.innerText = post.upvotes;
                 postTagCell.innerText = post.tags;
             });
         } else {
