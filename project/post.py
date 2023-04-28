@@ -12,10 +12,10 @@ post = Blueprint('post_route', __name__)
 
 @post.route("/testpost", methods=['GET'])
 def testpost():
-    return redirect(url_for("post.get_post", title="Post1"))
+    return redirect(url_for("post.get_post", p_title="Post1"))
 
 
-@post.route("/posts/<p_title>", methods=['GET', 'POST'])
+@post.route("/posts/<p_title>", methods=['GET'])
 def get_post(p_title):
     if request.method == 'GET':
         # Query join of Post and PostReply to get post with title and its replies
@@ -34,6 +34,11 @@ def get_post(p_title):
             return render_template("post-view.html", data=post_data)
 
     return "Post does not exist", 404
+
+
+@post.route("/posts/<p_title>/reply", methods=['POST'])
+def add_post_reply(p_title):
+    return {}
 
 
 @ post.route("/posts", methods=['GET'])
