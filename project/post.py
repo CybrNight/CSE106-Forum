@@ -56,7 +56,7 @@ def add_post_reply(p_title):
     if not current_user.is_authenticated:
         # Create warning message
         message = Markup(
-            '<h1>You must <a href="/login">login</a> in order to reply</h1>')
+            '<h1><a href="/login">Login</a> or <a href="/signup">Create Account</a> to post reply</h1>')
         flash(message, 'error')
 
         # Redirect user back to the post page
