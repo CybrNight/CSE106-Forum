@@ -1,42 +1,47 @@
-{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
+{% extends "base.html" %} {% block content %} {% block head %}
 <script src="{{ url_for('static',filename='js/viewPost.js') }}"></script>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
-/>
+
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
 />
-{% endblock %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/alerts.css') }}"
+/>
+{% endblock %} {% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+<div class="{{ category }}">{{ message }}</div>
+{% endfor %} {% endwith %}
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
     <h1 id="post-title">{{data.title}}</h1>
     <p id="post-content">{{data.content}}</p>
   </article>
-  <form
-    method="post"
-    action="{{ url_for('post_route.add_post_reply', p_title=data.title)}}"
-  >
-    <br />
-    <div class="field">
-      <div class="control">
-        <textarea name="post-body" cols="120" rows="5"></textarea>
-      </div>
-    </div>
-    <button class="button is-block is-info is-large is-fullwidth">
-      Add Reply
-    </button>
-  </form>
-  <br />
   <main>
-    <div class="comment-section">
-      {% for reply in data.replies %}
-      <div class="comment-container">
-        <h2>{{reply.author}}</h2>
+    <div class="post-replies-container">
+      <form
+        class="post-reply-form"
+        method="post"
+        action="{{ url_for('post_route.add_post_reply', p_title=data.title)}}"
+      >
+        <br />
+        <div class="field">
+          <div class="control">
+            <textarea name="reply-content" cols="120" rows="5"></textarea>
+          </div>
+        </div>
+        <button class="button is-block is-info is-large is-fullwidth">
+          Add Reply
+        </button>
+      </form>
+      {% for reply in data.replies|reverse %}
+      <div class="reply-container">
+        <!--NEED TO ADD URL TO USER PROFILE-->
+        <h2 class="reply-author">{{reply.author}}</h2>
+        <h4 class="reply-votes">Votes: <span>{{reply.upvotes}}</span></h4>
         <p>{{reply.content}}</p>
-        <h4>{{reply.upvotes}}</h4>
       </div>
       {% endfor %}
     </div>

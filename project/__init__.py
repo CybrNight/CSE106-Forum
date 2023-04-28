@@ -26,8 +26,8 @@ def create_posts():
 
     posts = {}
     replies = []
-    reply_content = ["Jacob quickly double sucked my favorite corpse",
-                     "The humongous Steve slurped ass'", "The dude around the corner quickly touched himself to your brothers friends"]
+    reply_content = ["#PETA FOREVER YOU PEOPLE ARE MURDERERS",
+                     "I love meat", "BEEF, It's what's for dinner b*tch"]
     users = User.query.all()
 
     for i in range(0, 25):
