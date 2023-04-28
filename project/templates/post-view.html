@@ -3,6 +3,10 @@
 
 <link
   rel="stylesheet"
+  href="{{ url_for('static', filename='css/base.css') }}"
+/>
+<link
+  rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
 />
 <link
@@ -30,6 +34,7 @@
         <br />
         <div class="field">
           <div class="control">
+            <h3>Post a reply</h1>
             <textarea name="reply-content" cols="120" rows="5"></textarea>
           </div>
         </div>
