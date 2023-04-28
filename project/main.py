@@ -2,7 +2,7 @@ from http.client import HTTPException
 from flask import Blueprint, abort, redirect, render_template, request, url_for
 from flask_login import login_required, fresh_login_required, current_user
 from . import db
-from .models import Course, User, Enrollment
+from .models import Course, User, Enrollment, Post, PostReply, Tag, Reply
 from flask import jsonify
 from project.enums import Role
 import git
@@ -58,7 +58,31 @@ def courses():
     if current_user.role == Role.PROFESSOR:
         return render_template('teacher.html')
     elif current_user.role == Role.DEFAULT:
-        return render_template('profile.html')
+        return render_template('courses.html')
+    # Anyone else gets index
+    return render_template('index.html')
+
+@ main.route('/profile', methods=['GET'])
+@login_required
+def profile():
+    # Take admin user to the admin page, admin has no courses
+    if current_user.is_admin():
+        return redirect("/admin")
+
+    # Take user to the teacher or student view based on role
+    if current_user.role == Role.PROFESSOR:
+        return render_template('teacher.html')
+    elif current_user.role == Role.DEFAULT:
+        post = Post.query.filter(Post.user == current_user).all()
+        posts = []
+        for p in post:
+            posts.append({"title": p.title,
+                          "content": p.content,
+                          "upvotes": p.upvotes,
+                          "downvotes": p.downvotes})
+            
+        print(posts)
+        return render_template('profile.html', data=posts)
     # Anyone else gets index
     return render_template('index.html')
 

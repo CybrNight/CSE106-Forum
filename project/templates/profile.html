@@ -16,7 +16,35 @@
 <div class="post-bio-container">
     <div class="my-posts">
         <h1 class="my-posts-title">My Posts</h1>
-        
+        {% for post in data %}
+        <table class="post-table">
+          <tr>
+            <td class="post-title">{{ post.title }}</td>
+          </tr>
+          <tr>
+            <td><hr class="white-line"></td>
+          </tr>
+          <tr>
+            <td>{{ post.content }}</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="tags-container">
+                <div>
+                  <p class="tags">some tag</p>
+                </div>
+                <div class="votes">
+                  <p class="upvote-downvote-text">{{ post.upvotes }}</p>
+                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343558918754394/2189px-Thumb_up_icon_2.svg.png" alt="upvote">
+                  <p class="upvote-downvote-text">{{ post.downvotes }}</p>
+                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343631329210378/2189px-Thumb_up_icon_2.svg2.png" alt="downvote">
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>
+        <br>
+        {% endfor %}
     </div>
     <div class="bio">
         <h1 class="bio-title">Bio</h1>
