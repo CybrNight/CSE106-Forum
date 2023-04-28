@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/posts.js') }}"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/all-posts.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+{% endblock %}
+<h1 class="title">Welcome, {{ current_user.name }}!</h1>
+<hr class="rounded" />
+<div class="tab">
+  <button
+    class="tablinks"
+    onclick="posts(event, 'AllPosts')"
+    id="defaultOpen"
+  >
+    Forum Posts
+  </button>
+</div>
+<div id="AllPosts" class="tabcontent">
+  <div class="tableFixHead">
+    <table id="posts-table">
+      <thead>
+        <tr>
+          <th class = "titleName">Title</th>
+          <th class = "author">Author</th>
+          <th class = "time">Time</th>
+          <th class = "upvotes">Upvotes</th>
+          <th class = "postTag">Tags</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
+</div>
+<script>
+  document.getElementById("defaultOpen").click();
+</script>
+{% endblock %}
