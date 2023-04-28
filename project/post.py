@@ -30,7 +30,8 @@ def get_post(p_title):
                          "content": post.content,
                          "upvotes": post.upvotes,
                          "downvotes": post.downvotes,
-                         "replies": replies}
+                         "replies": replies,
+                         "tags": post.tag_list}
             return render_template("post-view.html", data=post_data)
 
     return "Post does not exist", 404
@@ -38,7 +39,15 @@ def get_post(p_title):
 
 @post.route("/posts/<p_title>/reply", methods=['POST'])
 def add_post_reply(p_title):
-    return {}
+    body = request.form.get('post-body')
+    post = Post.query.join(PostReply).filter(Post.title == p_title).first()
+
+    reply = Reply(content=body)
+
+    db.session.add(PostReply(user=current_user, post=post, reply=reply))
+    db.session.commit()
+
+    return redirect(url_for("post_route.get_post", p_title=p_title))
 
 
 @ post.route("/posts", methods=['GET'])

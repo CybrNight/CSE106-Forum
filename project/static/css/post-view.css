@@ -90,16 +90,19 @@ main {
   min-height: 100vh;
   min-width: 100vh;
 }
+
 .comment-section {
   max-height: 25vh;
   max-width: 90%;
   background-color: #3f3f3f;
   overflow-y: scroll;
 }
-.comment {
+
+.comment-container {
   height: 10%;
   padding: 2%;
   margin: 2%;
   background-color: #ffff;
   color: red;
+  display: grid;
 }
