@@ -37,7 +37,8 @@
           Add Reply
         </button>
       </form>
-      {% for reply in data.replies %}
+      <!--This reverse broke before. Keep checking this-->
+      {% for reply in data.replies|reverse %}
       <div class="reply-container">
         <!--NEED TO ADD URL TO USER PROFILE-->
         <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
