@@ -4,25 +4,25 @@ from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from random import randint, choice, shuffle
-import requests
+from .enums import Role, TagType
 import os
-
-from project.enums import Role, TagType
 
 # init SQLAlchemy so we can use it later in our models
 db = SQLAlchemy()
-lorem = "https://baconipsum.com/api/?type=meat-and-filler"
 
 
 def create_posts():
+    from .models import User, Post, Tag, Reply, PostReply
+    from project.enums import TagType
+    '''
+    Creates a set number of random posts when rebuilding the database
+    '''
     path = os.getcwd()
-    path = os.path.join(path, "project/post.txt")
+    path = os.path.join(path, "project/resources/post.txt")
 
     post_text = ""
     with open(path, 'r') as file:
         post_text = file.read()
-
-    from .models import User, Post, Tag, Reply, PostReply
 
     posts = {}
     replies = []
@@ -59,7 +59,10 @@ def create_posts():
 
 
 def create_users():
+    '''Creates default users for testing'''
+
     from .models import User
+    from .enums import Role
 
     # Create user acccounts
     ralph = User(name="Ralph Jenkins", role=Role.DEFAULT)
@@ -78,23 +81,16 @@ def create_users():
                         john,
                         mindy,
                         aditya,
-                        yi, nancy])
-
-    db.session.commit()
-
-
-def create_random_users():
-    from .models import User
-    users = []
-    for i in range(0, 16):
-        users.append(User(
-            name=f"User{i}", role=Role.DEFAULT))
+                        yi, li, nancy])
 
     db.session.commit()
 
 
 def create_app():
-    app = Flask(__name__,  static_url_path="/static", static_folder="static")
+    app = Flask(__name__,
+                template_folder="./resources/templates",
+                static_url_path="/static",
+                static_folder="./resources/static")
 
     app.config['SECRET_KEY'] = 'secret-key-goes-here'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
@@ -107,47 +103,47 @@ def create_app():
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
-    from .models import User, Post, Reply
-    from .admin import AdminView
+    from .views import UserView
+    from .models import Post, Reply, User
 
-    admin = Admin(app, name="Dashboard", index_view=AdminView(
+    admin = Admin(app, name="Dashboard", index_view=UserView(
         User, db.session, url='/admin', endpoint='admin'))
     admin.add_view(ModelView(Post, db.session))
     admin.add_view(ModelView(Reply, db.session))
 
     @ login_manager.user_loader
     def load_user(uuid):
-        # since the user uuid is just the primary key of our user table, use it in the query for the user
+        # Since the User uuid is the primary key User table
+        # use it in the query for the User
         return User.query.get(int(uuid))
 
-    # blueprint for auth routes in our app
-    from .auth import auth as auth_blueprint
-    app.register_blueprint(auth_blueprint)
-
-    # blueprint for non-auth parts of app
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint)
-
-    from .post import post as post_blueprint
-    app.register_blueprint(post_blueprint)
+    # Import and register blueprints
+    from project.blueprints import auth_bp, main_bp, post_bp
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(main_bp)
+    app.register_blueprint(post_bp)
 
     return app
 
 
-def rebuild(random=False):
+def rebuild():
     from .models import User
+
+    # Create new app object
     app = create_app()
     app.app_context().push()
+
+    # Re-build all tables
     db.drop_all()
     db.create_all()
 
-    if random:
-        create_random_users()
-    else:
-        create_users()
+    # Generate user accounts
+    create_users()
 
+    # Generate default test posts
     create_posts()
 
+    # Add default admin account
     db.session.add(User(role=Role.ADMIN, name="ADMIN",
                         email="admin@me.com"))
 

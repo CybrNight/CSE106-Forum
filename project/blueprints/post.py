@@ -1,67 +1,97 @@
-from http.client import HTTPException
-from flask import Blueprint, abort, redirect, render_template, request, url_for
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask import flash
-from flask_login import login_required, fresh_login_required, current_user
+from flask_login import current_user
 from markupsafe import Markup
-from . import db
-from .models import Post, PostReply, User, Reply
 from flask import jsonify
-from project.enums import Role
-import git
+
+from project.models import Reply, PostReply, Post
+from project import db
 
 # Creates a new flask blueprint for this file
 post = Blueprint('post_route', __name__)
 
 
-# Returns a known good post for testing
 @post.route("/testpost/", methods=['GET'])
 def testpost():
-    return redirect(url_for("post_route.get_post", p_uuid="testpost", p_title="testpost"))
+    '''
+    Defines Flask route to return a valid post from db for testing
+
+    Methods: GET
+    '''
+
+    # Redirect user to testpost
+    return redirect(url_for("post_route.get_post",
+                            p_uuid="testpost",
+                            p_title="testpost"))
 
 
 @post.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
 def get_post(p_uuid, p_title):
-    if request.method == 'GET':
-        # Query join of Post and PostReply to get post with title and its replies
+    '''
+    Defines Flask route to retrieve specific post
 
+    Methods: GET
+    '''
+
+    if request.method == 'GET':
         if p_title == "testpost":
+            # If testpost is being loaded, then load the first Post in db
             post = Post.query.all()[0]
         else:
-            # Grab the post with title
+            # Query post with UUID
             post = Post.query.join(PostReply).filter(
                 Post.uuid == p_uuid).first()
 
+        # If we found the post then retrieve its data
         if post:
             replies = []
-            # For every post, get all the replies
+            # Get each PostReply entry from the post
             for p_reply in post.post_replies:
+                # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
+
+                # Store each Reply object data as JSON
                 replies.append(
-                    {"author": user.name, "content": reply.content, "upvotes": reply.total_votes})
+                    {"author": user.name,
+                     "content": reply.content,
+                     "upvotes": reply.total_votes})
+
+            # For the queried post, store its metadata and replies data in JSON
             post_data = {"uuid": post.uuid,
                          "title": post.title,
                          "content": post.content,
                          "upvotes": post.total_votes,
-                         "replies": replies,
-                         "tags": post.tag_list}
+                         "tags": post.tag_list,
+                         "replies": replies}
             print(post_data)
+
+            # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
 
+    # If post not found, then 404
     return "Post does not exist", 404
 
 
-# Route that handles adding a new reply to a post
 @post.route("/posts/<p_uuid>/<p_title>/reply/", methods=['POST'])
 def add_post_reply(p_uuid, p_title):
+    '''
+    Defines Flask route to add a reply to a Post
+
+    Methods: POST
+    '''
+
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
         # Create warning message
-        message = Markup(
-            '<h1><a href="/login">Login</a> or <a href="/signup">Create Account</a> to post reply</h1>')
-        flash(message, 'error')
+        message = Markup('< h1 > <a href="/login" > Login < /a > or'
+                         '< a href="/signup" > Create Account < /a > to post'
+                         'reply < /h1 >')
 
-        # Redirect user back to the post page
-        return redirect(url_for("post_route.get_post", p_uuid=p_uuid, p_title=p_title))
+        # Add message to flash list and reload page
+        flash(message, 'error')
+        return redirect(url_for("post_route.get_post",
+                                p_uuid=p_uuid,
+                                p_title=p_title))
 
     # Get the reply content from the form
     content = request.form.get('reply-content')
@@ -72,11 +102,20 @@ def add_post_reply(p_uuid, p_title):
     db.session.add(PostReply(user=current_user, post=post, reply=reply))
     db.session.commit()
 
-    return redirect(url_for("post_route.get_post", p_title=p_title))
+    # Reload the page to show new reply
+    return redirect(url_for("post_route.get_post",
+                            p_uuid=p_uuid,
+                            p_title=p_title))
 
 
 @post.route('/posts/', methods=['GET'])
 def all_posts():
+    '''
+    Defines Flask route to bring user to posts page
+
+    Methods: GET
+    '''
+
     # Take admin user to the admin page, admin has no courses
     if current_user.is_authenticated and current_user.is_admin():
         return redirect("/admin")
@@ -85,12 +124,19 @@ def all_posts():
     #    return render_template('teacher.html')
     # elif current_user.role == Role.DEFAULT:
     #    return render_template('courses.html')
-    # Anyone else gets index
+
+    # Return all-posts template if user passes checks
     return render_template('all-posts.html')
 
 
-@post.route("/getPosts/", methods=['GET'])
+@post.route('/getPosts/', methods=['GET'])
 def get_posts():
+    '''
+    Define Flask route to return list of all posts as JSON data to client
+
+    Methods: GET
+    '''
+
     if request.method == 'GET':
         posts = Post.query.all()
         posts_data = []
@@ -113,5 +159,5 @@ def get_posts():
 @ post.route("/posts/add/", methods=['POST'])
 def add_post():
     data = request.json
-
+    print(data)
     return "Success!", 205
