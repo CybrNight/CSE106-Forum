@@ -1,18 +1,9 @@
 from flask_login import UserMixin
 from sqlalchemy import event
-from datetime import datetime
 from project import db
-from enum import Enum
 from project.util import generate_salted_hash, generate_uuid
-
-
-class Role(Enum):
-    '''Defines Enum of role types to be used by User model'''
-    DEFAULT = "DEFAULT"
-    ADMIN = "ADMIN"
-
-    def __str__(self) -> str:
-        return self.value
+from werkzeug.security import gen_salt
+from project.enums import Role
 
 
 class User(UserMixin, db.Model):
@@ -63,7 +54,8 @@ class User(UserMixin, db.Model):
 
 @ event.listens_for(User.password, 'set', retval=True)
 def hash_user_password(target, value, oldvalue, initiator):
+    # If password has been changed, then update salt and re-hash
     if value != oldvalue:
-        # When the password is changed, also update the salt
+        target.salt = gen_salt(32)
         return generate_salted_hash(value, target.salt)
     return value

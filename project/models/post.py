@@ -1,19 +1,7 @@
-from sqlalchemy import event
 from datetime import datetime
 from project import db
-from enum import Enum
 from project.util import generate_salted_hash, generate_uuid
-
-
-class TagType(Enum):
-    '''Defines Enum of tags to be used by Post model'''
-    SCIENCE = 'Science'
-    MATH = 'Math'
-    PROGRAMMING = 'Programming'
-    HISTORY = 'History'
-
-    def __repr__(self) -> str:
-        return self.value
+from project.enums import TagType
 
 
 class PostReply(db.Model):
