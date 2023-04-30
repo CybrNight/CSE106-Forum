@@ -52,19 +52,13 @@ def profile():
     if current_user.is_admin():
         return redirect("/admin/")
 
-    # Take user to the teacher or student view based on role
-    if current_user.role == Role.PROFESSOR:
-        return render_template('teacher.html')
-    elif current_user.role == Role.DEFAULT:
-        post = Post.query.filter(Post.user == current_user).all()
-        posts = []
-        for p in post:
-            posts.append({"title": p.title,
-                          "content": p.content,
-                          "upvotes": p.upvotes,
-                          "downvotes": p.downvotes})
+    post = Post.query.filter(Post.user == current_user).all()
+    posts = []
+    for p in post:
+        posts.append({"title": p.title,
+                      "content": p.content,
+                      "upvotes": p.upvotes,
+                      "downvotes": p.downvotes})
 
-        print(posts)
-        return render_template('profile.html', data=posts)
-    # Anyone else gets index
-    return render_template('index.html')
+    print(posts)
+    return render_template('profile.html', data=posts)
