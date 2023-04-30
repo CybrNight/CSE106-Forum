@@ -26,8 +26,8 @@ def create_posts():
 
     posts = {}
     replies = []
-    reply_content = ["Jacob quickly double sucked my favorite corpse",
-                     "The humongous Steve slurped ass'", "The dude around the corner quickly touched himself to your brothers friends"]
+    reply_content = ["#PETA FOREVER YOU PEOPLE ARE MURDERERS",
+                     "I love meat", "BEEF, It's what's for dinner b*tch"]
     users = User.query.all()
 
     for i in range(0, 25):
@@ -59,21 +59,12 @@ def create_posts():
 
 
 def create_users():
-    from .models import User, Course, Enrollment
-    profs = []
-    courses = []
+    from .models import User
 
-    math = Course(name="Math 101", time="MWF 10:00-10:50 AM", max_enroll=8)
-    phys = Course(name="Physics 121", time="MWF 10:00-10:50 AM", max_enroll=8)
-    cs106 = Course(name="CS 106", time="MWF 10:00-10:50 AM", max_enroll=8)
-    cs162 = Course(name="CS 162", time="MWF 10:00-10:50 AM", max_enroll=8)
-
-    # Create Professor Accounts
-    ralph = User(name="Ralph Jenkins", role=Role.PROFESSOR)
-    susan = User(name="Suan Walker", role=Role.PROFESSOR)
-    ammon = User(name="Ammon Hepworth", role=Role.PROFESSOR)
-
-    # Create student accounts
+    # Create user acccounts
+    ralph = User(name="Ralph Jenkins", role=Role.DEFAULT)
+    susan = User(name="Suan Walker", role=Role.DEFAULT)
+    ammon = User(name="Ammon Hepworth", role=Role.DEFAULT)
     jose = User(name="Jose Santos")
     betty = User(name="Betty Brown")
     john = User(name="John Stuart")
@@ -83,68 +74,22 @@ def create_users():
     yi = User(name="Yi Wen Chen")
     nancy = User(name="Nancy Little")
 
-    # Add Professor accounts to courses
-    math.add_user(ralph)
-    phys.add_user(susan)
-    cs106.add_user(ammon)
-    cs162.add_user(ammon)
-
-    # Add Student accounts to courses
-    math.add_user(jose, grade=92)
-    math.add_user(betty, grade=65)
-    math.add_user(john, grade=86)
-    math.add_user(li, grade=77)
-
-    phys.add_user(nancy, grade=53)
-    phys.add_user(li, grade=85)
-    phys.add_user(mindy, grade=94)
-    phys.add_user(john, grade=91)
-    phys.add_user(betty, grade=88)
-
-    cs106.add_user(aditya, grade=93)
-    cs106.add_user(yi, grade=85)
-    cs106.add_user(nancy, grade=57)
-    cs106.add_user(mindy, grade=68)
-
-    cs162.add_user(aditya, grade=99)
-    cs162.add_user(nancy, grade=87)
-    cs162.add_user(yi, grade=92)
-    cs162.add_user(john, grade=67)
+    db.session.add_all([ralph, susan, ammon, jose, betty,
+                        john,
+                        mindy,
+                        aditya,
+                        yi, nancy])
 
     db.session.commit()
 
 
 def create_random_users():
-    from .models import User, Course, Enrollment
-
-    profs = []
+    from .models import User
     users = []
-    courses = []
-
-    for i in range(0, 8):
-        courses.append(
-            Course(name=f"CSE{100+(i*5)}", time="MWF 10:00-10:50AM", max_enroll=8))
-        profs.append(
-            User(name=f"Professor{i}", email=f"prof{i}@me.com", role=Role.PROFESSOR))
-
     for i in range(0, 16):
         users.append(User(
-            name=f"Student{i}", role=Role.DEFAULT))
+            name=f"User{i}", role=Role.DEFAULT))
 
-    for i in range(1, len(profs)-1):
-        db.session.add(courses[i])
-        courses[i].add_user(profs[i-1])
-
-        if randint(0, 25) < 10:
-            courses[i].add_user(profs[i], )
-        for user in users:
-            db.session.add(user)
-
-            if randint(0, 25) < 10:
-                try:
-                    courses[i].add_user(user)
-                except Exception as e:
-                    print(e)
     db.session.commit()
 
 
@@ -153,6 +98,7 @@ def create_app():
 
     app.config['SECRET_KEY'] = 'secret-key-goes-here'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['TEMPLATES_AUTO_RELOAD'] = True
 
     db.init_app(app)
 
@@ -161,12 +107,11 @@ def create_app():
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
-    from .models import User, Course, Enrollment, Post, Reply
-    from .admin import AdminView, CourseView
+    from .models import User, Post, Reply
+    from .admin import AdminView
 
     admin = Admin(app, name="Dashboard", index_view=AdminView(
         User, db.session, url='/admin', endpoint='admin'))
-    admin.add_view(CourseView(Course, db.session))
     admin.add_view(ModelView(Post, db.session))
     admin.add_view(ModelView(Reply, db.session))
 

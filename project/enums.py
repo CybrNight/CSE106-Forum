@@ -6,7 +6,6 @@ from enum import Enum
 
 class Role(Enum):
     DEFAULT = "DEFAULT"
-    PROFESSOR = "PROFESSOR"
     ADMIN = "ADMIN"
 
     def __str__(self) -> str:
