@@ -2,11 +2,12 @@ from . import db
 from flask_login import UserMixin
 from sqlalchemy import event
 from flask_admin.contrib.sqla import ModelView
+from werkzeug.security import generate_password_hash, gen_salt
 from werkzeug.security import generate_password_hash
 import uuid
 from .enums import Role, TagType
-from random import randint
 from datetime import datetime
+from .util import generate_uuid
 
 
 class PostReply(db.Model):
@@ -27,12 +28,12 @@ class PostReply(db.Model):
         return (self.user, self.post, self.reply)
 
 
-tags = db.Table("post_tags",
-                db.Column("tag_id", db.Integer, db.ForeignKey(
-                    "tag.id"), primary_key=True),
-                db.Column("post_id", db.Integer, db.ForeignKey(
-                    "post.id"), primary_key=True)
-                )
+post_tags = db.Table("post_tags",
+                     db.Column("tag_id", db.Integer, db.ForeignKey(
+                         "tag.id"), primary_key=True),
+                     db.Column("post_uuid", db.VARCHAR(255), db.ForeignKey(
+                         "post.uuid"), primary_key=True)
+                     )
 
 
 class User(UserMixin, db.Model):
@@ -90,7 +91,7 @@ class Post(db.Model):
     date = db.Column(db.DateTime)
     upvotes = db.Column(db.Integer)
     downvotes = db.Column(db.Integer)
-    tags = db.relationship("Tag", secondary=tags,
+    tags = db.relationship("Tag", secondary=post_tags,
                            lazy="subquery", backref=db.backref('posts', lazy=True))
 
     post_replies = db.relationship(
@@ -167,5 +168,7 @@ class Reply(db.Model):
 @ event.listens_for(User.password, 'set', retval=True)
 def hash_user_password(target, value, oldvalue, initiator):
     if value != oldvalue:
-        return generate_password_hash(value, method="sha256")
+        # When the password is changed, also update the salt
+        target.salt = gen_salt(32)
+        return generate_password_hash(value+target.salt, method="sha256")
     return value
