@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from random import randint, choice, shuffle
+from .enums import Role, TagType
 import os
 
 # init SQLAlchemy so we can use it later in our models
@@ -126,7 +127,7 @@ def create_app():
 
 
 def rebuild():
-    from models import User
+    from .models import User
 
     # Create new app object
     app = create_app()

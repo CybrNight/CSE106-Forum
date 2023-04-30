@@ -22,11 +22,8 @@ def login():
         remember = True if request.form.get('remember') else False
 
         user = User.query.filter_by(email=email).first()
-        salt = user.salt
-        hash = user.password
-
         # Check if the user does not exist or password has does not match
-        if not user or not check_salted_hash(hash, password, salt):
+        if not user or not check_salted_hash(user.password, password, user.salt):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login'))
 
