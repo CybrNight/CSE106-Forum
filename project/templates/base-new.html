@@ -17,13 +17,12 @@
     <section class="hero is-primary is-fullheight">
       <div class="hero-head">
         <nav class="navbar">
-          <a class="navbar-brand">xQc Questions</a>
+          <a href="{{ url_for('main.index')}}" class="navbar-brand"
+            >xQc Questions</a
+          >
           <div class="container">
             <div id="navbarMenuHeroA" class="navbar-menu">
               <div class="navbar-end">
-                <a href="{{ url_for('main.index') }}" class="navbar-item">
-                  Home
-                </a>
                 {% if current_user.is_authenticated and current_user.is_admin()
                 %}
                 <a href="/admin" class="navbar-item"> Admin </a>
