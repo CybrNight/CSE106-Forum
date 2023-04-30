@@ -5,7 +5,8 @@ from . import db
 from flask import jsonify
 from project.enums import Role
 import git
-from .models Post, PostReply, Tag, Reply
+from .models import Post, PostReply, Tag, Reply
+
 
 main = Blueprint('main', __name__)
 
