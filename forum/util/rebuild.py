@@ -1,5 +1,6 @@
 import os
 from random import randint, choice, shuffle
+from time import sleep
 
 
 def create_posts():
@@ -44,7 +45,9 @@ def create_posts():
                 reply.content = choice(reply_content)
                 db.session.add_all([user, post, reply])
                 db.session.add(PostReply(user=user, post=post, reply=reply))
+
     db.session.commit()
+    print("Committed Course data to database")
 
 
 def create_users():
@@ -71,6 +74,7 @@ def create_users():
                         yi, li, nancy])
 
     db.session.commit()
+    print("Committed User accounts to database")
 
 
 def rebuild_db(test_data=False):
@@ -81,20 +85,37 @@ def rebuild_db(test_data=False):
     # Create new app object
     app = create_app()
     app.app_context().push()
-
     print("Created app context")
+    sleep(0.1)
 
     # Re-build all tables
     db.drop_all()
+
+    print("Dropped all table in database")
+    sleep(0.1)
+
     db.create_all()
+
+    print("Created database tables")
+    sleep(0.1)
 
     if test_data:
         # Generate placeholder users and post content
+        print("Generating test data:")
+        sleep(0.1)
+
         create_users()
+        print("Generated user accounts")
+        sleep(0.1)
+
         create_posts()
+        print("Generated placehold post content")
+        sleep(0.1)
 
     # Add default admin account
     db.session.add(User(role=Role.ADMIN, name="ADMIN",
                         email="admin@me.com"))
+    print("Created ADMIN user account")
 
     db.session.commit()
+    print("Committed all changes to database")
