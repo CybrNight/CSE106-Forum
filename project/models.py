@@ -40,6 +40,7 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
+    salt = db.Column(db.String(100))
     name = db.Column(db.String(1000))
     user_id = db.Column(db.String, unique=True)
     role = db.Column(db.Enum(Role))
@@ -57,6 +58,7 @@ class User(UserMixin, db.Model):
     def __init__(self, name, email="default", password="123", role=Role.DEFAULT):
         self.name = name
         self.email = email
+        self.salt = uuid.uuid4().hex[:16]
         self.password = password
         self.role = role
 
@@ -166,5 +168,6 @@ class Reply(db.Model):
 @ event.listens_for(User.password, 'set', retval=True)
 def hash_user_password(target, value, oldvalue, initiator):
     if value != oldvalue:
-        return generate_password_hash(value, method="sha256")
+        target.salt = uuid.uuid4().hex[:16]
+        return generate_password_hash(target.salt+value, method="sha256")
     return value
