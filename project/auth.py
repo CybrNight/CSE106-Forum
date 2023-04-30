@@ -9,7 +9,7 @@ import uuid
 auth = Blueprint('auth', __name__)
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth.route('/login/', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template('login.html')
@@ -22,8 +22,9 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         # check if the user actually exists
-        # take the user-supplied password, hash it, and compare it to the hashed password in the database
-        if not user or not check_password_hash(user.password, password):
+        # take the user-supplied password, hash it, and compare it to the hashed
+        # password in the database
+        if not user or not check_password_hash(user.password, user.salt+password):
             flash('Please check your login details and try again.')
             # if the user doesn't exist or password is wrong, reload the page
             return redirect(url_for('auth.login'))
@@ -37,7 +38,7 @@ def login():
         return redirect(url_for("main.index"))
 
 
-@auth.route('/signup', methods=['GET', 'POST'])
+@auth.route('/signup/', methods=['GET', 'POST'])
 def signup():
     if request.method == 'GET':
         return render_template('signup.html')
@@ -65,7 +66,7 @@ def signup():
         return redirect(url_for('auth.login'))
 
 
-@auth.route('/logout')
+@auth.route('/logout/')
 @login_required
 def logout():
     session.clear()

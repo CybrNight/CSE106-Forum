@@ -5,13 +5,15 @@ from . import db
 from flask import jsonify
 from project.enums import Role
 import git
+from .models import Post, PostReply, Tag, Reply
+
 
 main = Blueprint('main', __name__)
 
 # Route to update the reload the server with latest repo changes if any
 
 
-@main.route('/reload_server', methods=['POST'])
+@main.route('/reload_server/', methods=['POST'])
 def webhook():
     if request.method == 'POST':
         repo = git.Repo('./CSE106-Forum')
@@ -26,9 +28,6 @@ def webhook():
 
 @ main.route('/')
 def index():
-    if not current_user.is_authenticated:
-        return redirect(url_for('auth.login'))
-
     return render_template('index.html')
 
 
@@ -44,3 +43,22 @@ def page_not_found(e):
 def forbidden(e):
     print(e)
     return render_template('error/403.html'), 403
+
+
+@ main.route('/profile/', methods=['GET'])
+@login_required
+def profile():
+    # Take admin user to the admin page, admin has no courses
+    if current_user.is_admin():
+        return redirect("/admin/")
+
+    post = Post.query.filter(Post.user == current_user).all()
+    posts = []
+    for p in post:
+        posts.append({"title": p.title,
+                      "content": p.content,
+                      "upvotes": p.upvotes,
+                      "downvotes": p.downvotes})
+
+    print(posts)
+    return render_template('profile.html', data=posts)

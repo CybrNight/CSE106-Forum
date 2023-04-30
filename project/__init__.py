@@ -116,9 +116,9 @@ def create_app():
     admin.add_view(ModelView(Reply, db.session))
 
     @ login_manager.user_loader
-    def load_user(user_id):
-        # since the user_id is just the primary key of our user table, use it in the query for the user
-        return User.query.get(int(user_id))
+    def load_user(uuid):
+        # since the user uuid is just the primary key of our user table, use it in the query for the user
+        return User.query.get(int(uuid))
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint

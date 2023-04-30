@@ -1,6 +1,5 @@
-{% extends "base.html" %} {% block content %} {% block head %}
+{% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
 <script src="{{ url_for('static',filename='js/viewPost.js') }}"></script>
-
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
@@ -9,10 +8,7 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='css/alerts.css') }}"
 />
-{% endblock %} {% with messages = get_flashed_messages(with_categories=true) %}
-{% for category, message in messages %}
-<div class="{{ category }}">{{ message }}</div>
-{% endfor %} {% endwith %}
+{% endblock %}
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
@@ -21,14 +17,19 @@
   </article>
   <main>
     <div class="post-replies-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% for
+      category, message in messages %}
+      <div class="{{ category }}">{{ message }}</div>
+      {% endfor %} {% endwith %}
       <form
         class="post-reply-form"
         method="post"
-        action="{{ url_for('post_route.add_post_reply', p_title=data.title)}}"
+        action="{{ url_for('post_route.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
       >
         <br />
         <div class="field">
           <div class="control">
+            <h3>Post a reply</h1>
             <textarea name="reply-content" cols="120" rows="5"></textarea>
           </div>
         </div>
@@ -39,7 +40,7 @@
       {% for reply in data.replies|reverse %}
       <div class="reply-container">
         <!--NEED TO ADD URL TO USER PROFILE-->
-        <h2 class="reply-author">{{reply.author}}</h2>
+        <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
         <h4 class="reply-votes">Votes: <span>{{reply.upvotes}}</span></h4>
         <p>{{reply.content}}</p>
       </div>
