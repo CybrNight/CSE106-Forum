@@ -1,3 +1,4 @@
+
 class PostView {
 
     constructor(postTitle, postContent) {

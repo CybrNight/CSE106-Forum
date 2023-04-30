@@ -16,9 +16,7 @@
   3. Allow percentage-based heights in the application
 */
 html,
-body {
-  height: 100%;
-}
+
 /*
   Typographic tweaks!
   4. Add accessible line-height
@@ -68,19 +66,28 @@ h6 {
   isolation: isolate;
 }
 
+.post-container {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
 .post-container article h1 {
   font-size: 2.5em;
-  color: red;
-  float: top;
+  color: rgb(255, 180, 41);
   display: flex;
+  margin-left: 2em;
 }
 
 .post-container article p {
   text-align: justify;
-}
-
-.post-container form {
-  left: 180px;
+  margin-left: 2%;
+  margin-right: 2%;
+  padding: 1%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  border: 0.25em solid rgb(75, 75, 75);
+  color: lightgray;
+  background-color: rgb(34, 34, 34);
 }
 
 main {
@@ -90,16 +97,56 @@ main {
   min-height: 100vh;
   min-width: 100vh;
 }
-.comment-section {
-  max-height: 25vh;
-  max-width: 90%;
-  background-color: #3f3f3f;
+
+.post-reply-form {
+  margin-left: 10em;
+}
+
+.post-reply-form textarea {
+  background-color: rgb(34, 34, 34);
+  color: lightgray;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.post-reply-form h3 {
+  color: lightgray;
+}
+
+.post-reply-form button {
+  background-color: black;
+  border: none;
+  color: lightgray;
+  padding: 1%;
+}
+
+.post-reply-form button:hover {
+  background-color: black;
+  border: none;
+  color: lightgray;
+  padding: 1%;
+  cursor: pointer;
+}
+
+.post-replies-container {
+  border: 0.25em;
   overflow-y: scroll;
 }
-.comment {
-  height: 10%;
-  padding: 2%;
-  margin: 2%;
-  background-color: #ffff;
-  color: red;
+
+.reply-container {
+  height: 1%;
+  padding: 0.5em;
+  margin: 1%;
+  background-color: inherit;
+  color: lightgray;
+  display: grid;
+  border: 0.25em solid rgb(75, 75, 75);
+}
+
+.reply-container .reply-author {
+  size: 10in;
+  color: rgb(238, 95, 95);
+}
+.reply-container .reply-votes span {
+  color: orange;
 }
