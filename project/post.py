@@ -16,11 +16,11 @@ post = Blueprint('post_route', __name__)
 # Returns a known good post for testing
 @post.route("/testpost/", methods=['GET'])
 def testpost():
-    return redirect(url_for("post_route.get_post", p_title="testpost"))
+    return redirect(url_for("post_route.get_post", p_uuid="testpost", p_title="testpost"))
 
 
-@post.route("/posts/<p_title>", methods=['GET'])
-def get_post(p_title):
+@post.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
+def get_post(p_uuid, p_title):
     if request.method == 'GET':
         # Query join of Post and PostReply to get post with title and its replies
 
@@ -29,7 +29,7 @@ def get_post(p_title):
         else:
             # Grab the post with title
             post = Post.query.join(PostReply).filter(
-                Post.title == p_title).first()
+                Post.uuid == p_uuid).first()
 
         if post:
             replies = []
@@ -38,7 +38,8 @@ def get_post(p_title):
                 user, _, reply = p_reply.get()
                 replies.append(
                     {"author": user.name, "content": reply.content, "upvotes": reply.total_votes})
-            post_data = {"title": post.title,
+            post_data = {"uuid": post.uuid,
+                         "title": post.title,
                          "content": post.content,
                          "upvotes": post.total_votes,
                          "replies": replies,
@@ -50,8 +51,8 @@ def get_post(p_title):
 
 
 # Route that handles adding a new reply to a post
-@post.route("/posts/<p_title>/reply/", methods=['POST'])
-def add_post_reply(p_title):
+@post.route("/posts/<p_uuid>/<p_title>/reply/", methods=['POST'])
+def add_post_reply(p_uuid, p_title):
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
         # Create warning message
@@ -60,7 +61,7 @@ def add_post_reply(p_title):
         flash(message, 'error')
 
         # Redirect user back to the post page
-        return redirect(url_for("post_route.get_post", p_title=p_title))
+        return redirect(url_for("post_route.get_post", p_uuid=p_uuid, p_title=p_title))
 
     # Get the reply content from the form
     content = request.form.get('reply-content')
@@ -75,10 +76,9 @@ def add_post_reply(p_title):
 
 
 @post.route('/posts/', methods=['GET'])
-@login_required
 def all_posts():
     # Take admin user to the admin page, admin has no courses
-    if current_user.is_admin():
+    if current_user.is_authenticated and current_user.is_admin():
         return redirect("/admin")
     # Take user to the teacher or student view based on role
     # if current_user.role == Role.PROFESSOR:
@@ -99,7 +99,8 @@ def get_posts():
             for tag in post.tags:
                 tags.append(tag.type.value)
 
-            posts_data.append({"title": post.title,
+            posts_data.append({"uuid": post.uuid,
+                               "title": post.title,
                                "upvotes": post.total_votes,
                                "author": post.user.name,
                                "date": post.date,

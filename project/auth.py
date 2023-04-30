@@ -24,7 +24,6 @@ def login():
         # check if the user actually exists
         # take the user-supplied password, hash it, and compare it to the hashed
         # password in the database
-        print(user.salt+password)
         if not user or not check_password_hash(user.password, user.salt+password):
             flash('Please check your login details and try again.')
             # if the user doesn't exist or password is wrong, reload the page
