@@ -2,8 +2,30 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background-color: #05d1b2;
+    background-color: rgb(34, 34, 34);
     color: white;
+    text-align: center;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif
+  }
+
+  h1 {
+    font-size: 2.0em;
+    margin: 0;
+    padding: 0;
+    color: white;
+    margin: 20px;
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
+  }
+
+  .rounded {
+    border: 1px solid white;
+    border-radius: 5px;
+    width: 95%;
+    margin-bottom: 40px;
   }
   
   table {
@@ -14,7 +36,6 @@ body {
     font-family: sans-serif;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
     width: 95%;
-    background-color: #0a8e7b;
     table-layout: fixed;
   }
   
@@ -25,14 +46,15 @@ body {
     display: block;
   }
   .tableFixHead thead th {
-    background-color: #2e7a6c;
+    background-color: #333;
     position: sticky; /* make the table heads sticky */
     top: 0px; /* table head will be placed from the top of the table and sticks to it */
     color: white;
   }
   
   tr {
-    background-color: #4e9487;
+    background-color: #333;
+    height: 60px;
   }
   
   th,
@@ -61,21 +83,23 @@ body {
   }
 
   tr {
-    border-bottom: 1px solid #4a766e;
+    border-bottom: 1px solid black;
   }
   
   tr:nth-of-type(even) {
-    background-color: #709e96;
+    background-color: #4a4a4a;
   }
   
   tr:last-of-type {
-    border-bottom: 3px solid #4a766e;
+    border-bottom: 3px solid black;
   }
   
   .tab {
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
+    width: 85%;
+    margin: auto;
   }
   
   .tab button {
@@ -99,10 +123,12 @@ body {
   
   .tabcontent {
     display: none;
-    padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-    background-color: #0aae95;
+    background-color: rgb(34, 34, 34);
+    width: 85%;
+    height: 90%;
+    margin: auto;
   }
   
   
