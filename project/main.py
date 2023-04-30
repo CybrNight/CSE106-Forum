@@ -13,7 +13,7 @@ main = Blueprint('main', __name__)
 # Route to update the reload the server with latest repo changes if any
 
 
-@main.route('/reload_server', methods=['POST'])
+@main.route('/reload_server/', methods=['POST'])
 def webhook():
     if request.method == 'POST':
         repo = git.Repo('./CSE106-Forum')
@@ -44,12 +44,13 @@ def forbidden(e):
     print(e)
     return render_template('error/403.html'), 403
 
-@ main.route('/profile', methods=['GET'])
+
+@ main.route('/profile/', methods=['GET'])
 @login_required
 def profile():
     # Take admin user to the admin page, admin has no courses
     if current_user.is_admin():
-        return redirect("/admin")
+        return redirect("/admin/")
 
     # Take user to the teacher or student view based on role
     if current_user.role == Role.PROFESSOR:
@@ -62,7 +63,7 @@ def profile():
                           "content": p.content,
                           "upvotes": p.upvotes,
                           "downvotes": p.downvotes})
-            
+
         print(posts)
         return render_template('profile.html', data=posts)
     # Anyone else gets index
