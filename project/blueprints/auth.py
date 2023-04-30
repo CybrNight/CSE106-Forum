@@ -1,16 +1,18 @@
-from flask import Blueprint, session, render_template, redirect, url_for, request, flash
-from flask_login import login_user, login_required, logout_user
-from flask import make_response
-from werkzeug.security import generate_password_hash, check_password_hash
+"""Module provides required Flask utility functions for routes"""
+from flask import (Blueprint, flash, redirect, render_template, request,
+                   session, url_for)
+from flask_login import login_required, login_user, logout_user
+
+from project.util import check_salted_hash
+from project import db
 from project.models import User
-from project.main import db
-import uuid
 
 auth = Blueprint('auth', __name__)
 
 
 @auth.route('/login/', methods=['GET', 'POST'])
 def login():
+    # Defines Flask route to handle login requests
     if request.method == 'GET':
         return render_template('login.html')
     elif request.method == 'POST':
@@ -20,26 +22,30 @@ def login():
         remember = True if request.form.get('remember') else False
 
         user = User.query.filter_by(email=email).first()
+        salt = user.salt
+        hash = user.password
 
-        # check if the user actually exists
-        # take the user-supplied password, hash it, and compare it to the hashed
-        # password in the database
-        if not user or not check_password_hash(user.password, user.salt+password):
+        # Check if the user does not exist or password has does not match
+        if not user or not check_salted_hash(hash, password, salt):
             flash('Please check your login details and try again.')
-            # if the user doesn't exist or password is wrong, reload the page
             return redirect(url_for('auth.login'))
 
-        # if the above check passes, then we know the user has the right
-        # credentials
+        # Login user if they pass auth check
         login_user(user, remember=remember)
 
+        # If admin logs in take them straight to admin panel
         if user.is_admin():
             return (redirect("/admin"))
+
+        # Take regular users to the main view
         return redirect(url_for("main.index"))
 
 
 @auth.route('/signup/', methods=['GET', 'POST'])
 def signup():
+    # Defines Flask route to handle signup requests
+
+    # If GET request then take user to signup page
     if request.method == 'GET':
         return render_template('signup.html')
     elif request.method == 'POST':
@@ -66,9 +72,14 @@ def signup():
         return redirect(url_for('auth.login'))
 
 
-@auth.route('/logout/')
+@auth.route('/logout/', methods=['GET'])
 @login_required
 def logout():
+    # Defines Flask route to handle logout requests
+
+    # Clear out session data and logout user
     session.clear()
     logout_user()
+
+    # Redirect user to the homepage
     return redirect(url_for("main.index"))

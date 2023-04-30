@@ -1,3 +1,2 @@
-from project import *
-from project.models import *
+from project import rebuild
 rebuild()

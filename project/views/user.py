@@ -1,25 +1,26 @@
-from flask_admin import Admin, expose
 from flask_admin.contrib.sqla import ModelView
-from flask import session, render_template, flash, request
+from flask import render_template
 from flask_login import current_user
-from .models import Role, User
-from sqlalchemy.exc import IntegrityError
-from project.main import db
+from project.models import User
+from project import db
 import uuid
 
 
-class AdminView(ModelView):
-    # Setup columns to show in main view
+class UserView(ModelView):
+    '''Defines AdminView for admin control panel'''
     column_hide_backrefs = False
     column_list = ('uuid', 'email', 'name', 'role')
 
-    # Setup fields that can be modified during creation/editing
-    form_excluded_columns = ('uuid')
+    # Setup field that are exlcuded from User model table view in admin
+    form_excluded_columns = ('uuid', 'salt')
 
+    # Set fields visible when creating new instance of User
     form_create_rules = ('email', 'name', 'password', 'role')
 
+    # Set fields visible when editing instance of User
     form_edit_rules = ('email', 'name', 'password', 'role')
 
+    # Set which arguments are visible
     form_widget_args = {
         'uuid': {
             "visible": False
@@ -39,17 +40,17 @@ class AdminView(ModelView):
             return render_template("error/403.html"), 403
 
     def on_model_change(self, form, model, is_created):
-        # Generate new uuid for user
+        # Generate new uuid for user_id
         if is_created:
-            temp_uuid = uuid.uuid4().hex[:8]
+            user_id = uuid.uuid4().hex[:8]
 
             # Get all existing uuid from db
-            exists = db.session.query(User.uuid).filter_by(
-                uuid=temp_uuid).first() is not None
+            exists = db.session.query(User.user_id).filter_by(
+                user_id=user_id).first() is not None
 
             # Continue generating while non-unique
             while exists:
-                temp_uuid = uuid.uuid4().hex[:8]
+                user_id = uuid.uuid4().hex[:8]
 
-            model.uuid = temp_uuid
+            model.user_id = user_id
         return True

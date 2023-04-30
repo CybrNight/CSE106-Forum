@@ -1,33 +1,26 @@
-from http.client import HTTPException
-from flask import Blueprint, abort, redirect, render_template, request, url_for
-from flask_login import login_required, fresh_login_required, current_user
-from . import db
-from flask import jsonify
-from project.enums import Role
+from project.models import Post
+from flask import Blueprint, redirect, render_template, request
+from flask_login import login_required, current_user
 import git
-from .models import Post, PostReply, Tag, Reply
-
 
 main = Blueprint('main', __name__)
-
-# Route to update the reload the server with latest repo changes if any
 
 
 @main.route('/reload_server/', methods=['POST'])
 def webhook():
+    # Defines webhook for GitHub connection. Auto pull repo changes on server
     if request.method == 'POST':
         repo = git.Repo('./CSE106-Forum')
         origin = repo.remotes.origin
         origin.pull()
-        return 'Updated PythonAnywhere successfully', 200
+        return 'Pulled changes from GitHub to server!', 200
     else:
         return 'Wrong event type', 400
 
-# Main view
 
-
-@ main.route('/')
+@ main.route('/', methods=['GET'])
 def index():
+    # Defines main Flask route for homepage
     return render_template('index.html')
 
 
@@ -48,12 +41,17 @@ def forbidden(e):
 @ main.route('/profile/', methods=['GET'])
 @login_required
 def profile():
-    # Take admin user to the admin page, admin has no courses
+
+    # Defines route for profile view
+
+    # If admin accesses portal then take them to admin panel
     if current_user.is_admin():
         return redirect("/admin/")
 
+    # Query the all posts belonging to user
     post = Post.query.filter(Post.user == current_user).all()
     posts = []
+    # For every post in query, add to JSON to send to template
     for p in post:
         posts.append({"title": p.title,
                       "content": p.content,
