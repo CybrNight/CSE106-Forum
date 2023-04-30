@@ -1,7 +1,7 @@
 from datetime import datetime
-from project import db
-from project.util import generate_salted_hash, generate_uuid
-from project.enums import TagType
+from forum import db
+from forum.util.hash import gen_model_uuid
+from forum.models.enums import TagType
 
 
 class PostReply(db.Model):
@@ -76,7 +76,7 @@ class Post(db.Model):
         self.upvotes = 1
         self.downvotes = 0
 
-        self.uuid = generate_uuid(db, Post, 8)
+        self.uuid = gen_model_uuid(db, Post, 8)
         db.session.commit()
 
     def upvote(self):
@@ -120,7 +120,7 @@ class Reply(db.Model):
         self.upvotes = 1
         self.downvotes = 0
         self.content = content
-        self.uuid = generate_uuid(db, Reply, 8)
+        self.uuid = gen_model_uuid(db, Reply, 8)
 
     def upvote(self):
         self.upvotes += 1

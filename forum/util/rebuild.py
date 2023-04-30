@@ -1,24 +1,13 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from random import randint, choice, shuffle
-from .enums import Role, TagType
 import os
-
-# init SQLAlchemy so we can use it later in our models
-db = SQLAlchemy()
+from random import randint, choice, shuffle
 
 
 def create_posts():
-    from .models import User, Post, Tag, Reply, PostReply
-    from project.enums import TagType
-    '''
-    Creates a set number of random posts when rebuilding the database
-    '''
+    from forum import db
+    from forum.models import User, Post, Tag, Reply, PostReply, TagType
+    '''Creates a set number of random posts when rebuilding the database'''
     path = os.getcwd()
-    path = os.path.join(path, "project/resources/post.txt")
+    path = os.path.join(path, "forum/util/post.txt")
 
     post_text = ""
     with open(path, 'r') as file:
@@ -59,11 +48,9 @@ def create_posts():
 
 
 def create_users():
+    from forum import db
+    from forum.models import Role, User
     '''Creates default users for testing'''
-
-    from .models import User
-    from .enums import Role
-
     # Create user acccounts
     ralph = User(name="Ralph Jenkins", role=Role.DEFAULT)
     susan = User(name="Suan Walker", role=Role.DEFAULT)
@@ -86,68 +73,28 @@ def create_users():
     db.session.commit()
 
 
-def create_app():
-    app = Flask(__name__,
-                template_folder="./resources/templates",
-                static_url_path="/static",
-                static_folder="./resources/static")
-
-    app.config['SECRET_KEY'] = 'secret-key-goes-here'
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    app.config['TEMPLATES_AUTO_RELOAD'] = True
-
-    db.init_app(app)
-
-    login_manager = LoginManager()
-    login_manager.login_view = 'auth.login'
-    login_manager.session_protection = "strong"
-    login_manager.init_app(app)
-
-    from .views import UserView
-    from .models import Post, Reply, User
-
-    admin = Admin(app, name="Dashboard", index_view=UserView(
-        User, db.session, url='/admin', endpoint='admin'))
-    admin.add_view(ModelView(Post, db.session))
-    admin.add_view(ModelView(Reply, db.session))
-
-    @ login_manager.user_loader
-    def load_user(uuid):
-        # Since the User uuid is the primary key User table
-        # use it in the query for the User
-        return User.query.get(int(uuid))
-
-    # Import and register blueprints
-    from project.blueprints import auth_bp, main_bp, post_bp
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(main_bp)
-    app.register_blueprint(post_bp)
-
-    return app
-
-
-def rebuild():
-    from .models import User
+def rebuild_db(test_data=False):
+    from forum import db, create_app
+    '''Rebuilds the database with test data'''
+    from forum.models import User, Role
 
     # Create new app object
     app = create_app()
     app.app_context().push()
 
+    print("Created app context")
+
     # Re-build all tables
     db.drop_all()
     db.create_all()
 
-    # Generate user accounts
-    create_users()
-
-    # Generate default test posts
-    create_posts()
+    if test_data:
+        # Generate placeholder users and post content
+        create_users()
+        create_posts()
 
     # Add default admin account
     db.session.add(User(role=Role.ADMIN, name="ADMIN",
                         email="admin@me.com"))
 
     db.session.commit()
-
-
-flask_app = create_app()

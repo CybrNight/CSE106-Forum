@@ -1,12 +1,14 @@
-from project.models import Post
+from forum.models import Post
 from flask import Blueprint, redirect, render_template, request
 from flask_login import login_required, current_user
 import git
 
-main = Blueprint('main', __name__)
+main_bp = Blueprint('main_bp', __name__,
+                    template_folder="templates",
+                    static_folder="static")
 
 
-@main.route('/reload_server/', methods=['POST'])
+@main_bp.route('/reload_server/', methods=['POST'])
 def webhook():
     # Defines webhook for GitHub connection. Auto pull repo changes on server
     if request.method == 'POST':
@@ -18,27 +20,27 @@ def webhook():
         return 'Wrong event type', 400
 
 
-@ main.route('/', methods=['GET'])
+@ main_bp.route('/', methods=['GET'])
 def index():
     # Defines main Flask route for homepage
     return render_template('index.html')
 
 
 # 404 errors
-@ main.app_errorhandler(404)
+@ main_bp.app_errorhandler(404)
 def page_not_found(e):
     print(e)
     return render_template('error/404.html'), 404
 
 
 # 403 errors
-@ main.app_errorhandler(403)
+@ main_bp.app_errorhandler(403)
 def forbidden(e):
     print(e)
     return render_template('error/403.html'), 403
 
 
-@ main.route('/profile/', methods=['GET'])
+@ main_bp.route('/profile/', methods=['GET'])
 @login_required
 def profile():
 

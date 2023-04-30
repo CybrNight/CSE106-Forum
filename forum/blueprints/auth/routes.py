@@ -3,14 +3,16 @@ from flask import (Blueprint, flash, redirect, render_template, request,
                    session, url_for)
 from flask_login import login_required, login_user, logout_user
 
-from project.util import check_salted_hash
-from project import db
-from project.models import User
+from forum.util.hash import check_salt_hash
+from forum import db
+from forum.models import User
 
-auth = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth_bp', __name__,
+                    template_folder="templates",
+                    static_folder="static")
 
 
-@auth.route('/login/', methods=['GET', 'POST'])
+@auth_bp.route('/login/', methods=['GET', 'POST'])
 def login():
     # Defines Flask route to handle login requests
     if request.method == 'GET':
@@ -23,9 +25,9 @@ def login():
 
         user = User.query.filter_by(email=email).first()
         # Check if the user does not exist or password has does not match
-        if not user or not check_salted_hash(user.password, password, user.salt):
+        if not user or not check_salt_hash(user.password, password, user.salt):
             flash('Please check your login details and try again.')
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth_bp.login'))
 
         # Login user if they pass auth check
         login_user(user, remember=remember)
@@ -35,10 +37,10 @@ def login():
             return (redirect("/admin"))
 
         # Take regular users to the main view
-        return redirect(url_for("main.index"))
+        return redirect(url_for("main_bp.index"))
 
 
-@auth.route('/signup/', methods=['GET', 'POST'])
+@auth_bp.route('/signup/', methods=['GET', 'POST'])
 def signup():
     # Defines Flask route to handle signup requests
 
@@ -56,7 +58,7 @@ def signup():
 
         if user:  # Flash error is user already exists
             flash('Email address already exists')
-            return redirect(url_for('auth.signup'))
+            return redirect(url_for('auth_bp.signup'))
 
         # Create new user object, password hashing handled in models.py
         new_user = User(email=email, name=name,
@@ -66,10 +68,10 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth_bp.login'))
 
 
-@auth.route('/logout/', methods=['GET'])
+@auth_bp.route('/logout/', methods=['GET'])
 @login_required
 def logout():
     # Defines Flask route to handle logout requests
@@ -79,4 +81,4 @@ def logout():
     logout_user()
 
     # Redirect user to the homepage
-    return redirect(url_for("main.index"))
+    return redirect(url_for("main_bp.index"))

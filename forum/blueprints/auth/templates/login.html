@@ -7,7 +7,7 @@
     {% endif %} {% endwith %}
     <form
       method="post"
-      action="{{ url_for('auth.login', next=request.args.get('next')) }}"
+      action="{{ url_for('auth_bp.login', next=request.args.get('next')) }}"
     >
       <div class="field">
         <div class="control">

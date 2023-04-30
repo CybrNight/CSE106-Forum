@@ -1,9 +1,9 @@
 from flask_login import UserMixin
 from sqlalchemy import event
-from project import db
-from project.util import generate_salted_hash, generate_uuid
+from forum import db
+from forum.util.hash import gen_salt_hash, gen_model_uuid
 from werkzeug.security import gen_salt
-from project.enums import Role
+from forum.models.enums import Role
 
 
 class User(UserMixin, db.Model):
@@ -36,7 +36,7 @@ class User(UserMixin, db.Model):
         self.role = role
 
         # When a new User object is initialized, set UUID
-        self.uuid = generate_uuid(db, User)
+        self.uuid = gen_model_uuid(db, User)
 
         # Set email to generic template based on first+last name
         if self.email == "default":
@@ -57,5 +57,5 @@ def hash_user_password(target, value, oldvalue, initiator):
     # If password has been changed, then update salt and re-hash
     if value != oldvalue:
         target.salt = gen_salt(32)
-        return generate_salted_hash(value, target.salt)
+        return gen_salt_hash(value, target.salt)
     return value

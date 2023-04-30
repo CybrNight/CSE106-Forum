@@ -2,15 +2,15 @@ import uuid
 from werkzeug.security import check_password_hash, generate_password_hash
 
 
-def check_salted_hash(hash, password, salt):
+def check_salt_hash(hash, password, salt):
     return check_password_hash(hash, password+salt)
 
 
-def generate_salted_hash(password, salt, method="sha256"):
+def gen_salt_hash(password, salt, method="sha256"):
     return generate_password_hash(password+str(salt), method=method)
 
 
-def generate_uuid(db, model, size=32):
+def gen_model_uuid(db, model, size=32):
     '''
     Generates new UUID for specified model and char length
 

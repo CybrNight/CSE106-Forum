@@ -1,12 +1,12 @@
 from flask_admin.contrib.sqla import ModelView
 from flask import render_template
 from flask_login import current_user
-from project.models import User
-from project import db
+from forum import db
 import uuid
 
 
 class UserView(ModelView):
+
     '''Defines AdminView for admin control panel'''
     column_hide_backrefs = False
     column_list = ('uuid', 'email', 'name', 'role')
@@ -40,6 +40,8 @@ class UserView(ModelView):
             return render_template("error/403.html"), 403
 
     def on_model_change(self, form, model, is_created):
+        from forum.models import User
+
         # Generate new uuid for user_id
         if is_created:
             user_id = uuid.uuid4().hex[:8]

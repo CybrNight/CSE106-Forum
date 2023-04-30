@@ -4,14 +4,16 @@ from flask_login import current_user
 from markupsafe import Markup
 from flask import jsonify
 
-from project.models import Reply, PostReply, Post
-from project import db
+from forum.models import Reply, PostReply, Post
+from forum import db
 
 # Creates a new flask blueprint for this file
-post = Blueprint('post_route', __name__)
+post_bp = Blueprint('post_bp', __name__,
+                    template_folder="templates",
+                    static_folder="static")
 
 
-@post.route("/testpost/", methods=['GET'])
+@post_bp.route("/testpost/", methods=['GET'])
 def testpost():
     '''
     Defines Flask route to return a valid post from db for testing
@@ -20,12 +22,12 @@ def testpost():
     '''
 
     # Redirect user to testpost
-    return redirect(url_for("post_route.get_post",
+    return redirect(url_for("post_bp.get_post",
                             p_uuid="testpost",
                             p_title="testpost"))
 
 
-@post.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
+@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
 def get_post(p_uuid, p_title):
     '''
     Defines Flask route to retrieve specific post
@@ -72,7 +74,7 @@ def get_post(p_uuid, p_title):
     return "Post does not exist", 404
 
 
-@post.route("/posts/<p_uuid>/<p_title>/reply/", methods=['POST'])
+@post_bp.route("/posts/<p_uuid>/<p_title>/reply/", methods=['POST'])
 def add_post_reply(p_uuid, p_title):
     '''
     Defines Flask route to add a reply to a Post
@@ -89,7 +91,7 @@ def add_post_reply(p_uuid, p_title):
 
         # Add message to flash list and reload page
         flash(message, 'error')
-        return redirect(url_for("post_route.get_post",
+        return redirect(url_for("post_bp.get_post",
                                 p_uuid=p_uuid,
                                 p_title=p_title))
 
@@ -103,12 +105,12 @@ def add_post_reply(p_uuid, p_title):
     db.session.commit()
 
     # Reload the page to show new reply
-    return redirect(url_for("post_route.get_post",
+    return redirect(url_for("post_bp.get_post",
                             p_uuid=p_uuid,
                             p_title=p_title))
 
 
-@post.route('/posts/', methods=['GET'])
+@post_bp.route('/posts/', methods=['GET'])
 def all_posts():
     '''
     Defines Flask route to bring user to posts page
@@ -129,7 +131,7 @@ def all_posts():
     return render_template('all-posts.html')
 
 
-@post.route('/getPosts/', methods=['GET'])
+@post_bp.route('/getPosts/', methods=['GET'])
 def get_posts():
     '''
     Define Flask route to return list of all posts as JSON data to client
@@ -156,7 +158,7 @@ def get_posts():
     return "Success!", 205
 
 
-@ post.route("/posts/add/", methods=['POST'])
+@ post_bp.route("/posts/add/", methods=['POST'])
 def add_post():
     data = request.json
     print(data)
