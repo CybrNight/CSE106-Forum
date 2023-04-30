@@ -1,0 +1,52 @@
+{% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
+<script src="{{ url_for('static',filename='js/viewPost.js') }}"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/post-view.css') }}"
+/>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/alerts.css') }}"
+/>
+{% endblock %}
+<div class="post-container">
+  <article>
+    <!--This header should be left-aligned-->
+    <h1 id="post-title">{{data.title}}</h1>
+    <p id="post-content">{{data.content}}</p>
+  </article>
+  <main>
+    <div class="post-replies-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% for
+      category, message in messages %}
+      <div class="{{ category }}">{{ message }}</div>
+      {% endfor %} {% endwith %}
+      <form
+        class="post-reply-form"
+        method="post"
+        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
+      >
+        <br />
+        <div class="field">
+          <div class="control">
+            <h3>Post a reply</h1>
+            <textarea name="reply-content" cols="120" rows="5"></textarea>
+          </div>
+        </div>
+        <button class="button is-block is-info is-large is-fullwidth">
+          Add Reply
+        </button>
+      </form>
+      <!--This reverse broke before. Keep checking this-->
+      {% for reply in data.replies|reverse %}
+      <div class="reply-container">
+        <!--NEED TO ADD URL TO USER PROFILE-->
+        <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
+        <h4 class="reply-votes">Votes: <span>{{reply.upvotes}}</span></h4>
+        <p>{{reply.content}}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+  {% endblock %}
+</div>
