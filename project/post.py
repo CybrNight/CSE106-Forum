@@ -14,7 +14,7 @@ post = Blueprint('post_route', __name__)
 
 
 # Returns a known good post for testing
-@post.route("/testpost", methods=['GET'])
+@post.route("/testpost/", methods=['GET'])
 def testpost():
     return redirect(url_for("post_route.get_post", p_title="testpost"))
 
@@ -50,7 +50,7 @@ def get_post(p_title):
 
 
 # Route that handles adding a new reply to a post
-@post.route("/posts/<p_title>/reply", methods=['POST'])
+@post.route("/posts/<p_title>/reply/", methods=['POST'])
 def add_post_reply(p_title):
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
@@ -73,21 +73,23 @@ def add_post_reply(p_title):
 
     return redirect(url_for("post_route.get_post", p_title=p_title))
 
-@post.route('/posts', methods=['GET'])
+
+@post.route('/posts/', methods=['GET'])
 @login_required
 def all_posts():
     # Take admin user to the admin page, admin has no courses
     if current_user.is_admin():
         return redirect("/admin")
     # Take user to the teacher or student view based on role
-    #if current_user.role == Role.PROFESSOR:
+    # if current_user.role == Role.PROFESSOR:
     #    return render_template('teacher.html')
-    #elif current_user.role == Role.DEFAULT:
+    # elif current_user.role == Role.DEFAULT:
     #    return render_template('courses.html')
     # Anyone else gets index
     return render_template('all-posts.html')
 
-@post.route("/getPosts", methods=['GET'])
+
+@post.route("/getPosts/", methods=['GET'])
 def get_posts():
     if request.method == 'GET':
         posts = Post.query.all()
@@ -98,16 +100,16 @@ def get_posts():
                 tags.append(tag.type.value)
 
             posts_data.append({"title": post.title,
-                "upvotes": post.total_votes,
-                "author": post.user.name,
-                "date": post.date,
-                "tags": tags})
+                               "upvotes": post.total_votes,
+                               "author": post.user.name,
+                               "date": post.date,
+                               "tags": tags})
         return jsonify(posts_data)
-    
+
     return "Success!", 205
 
 
-@ post.route("/posts/add", methods=['POST'])
+@ post.route("/posts/add/", methods=['POST'])
 def add_post():
     data = request.json
 
