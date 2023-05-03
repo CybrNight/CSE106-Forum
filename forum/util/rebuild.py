@@ -6,12 +6,18 @@ def create_posts():
     from forum import db
     from forum.models import User, Post, Tag, Reply, PostReply, TagType
     '''Creates a set number of random posts when rebuilding the database'''
-    path = os.getcwd()
-    path = os.path.join(path, "forum/util/post.txt")
+    res_path = os.path.join(os.getcwd(), "./forum/util/")
+
+    post_file = os.path.join(res_path, "post.txt")
+    reply_file = os.path.join(res_path, "reply.txt")
 
     post_text = ""
-    with open(path, 'r') as file:
+    reply_text = ""
+    with open(post_file, 'r') as file:
         post_text = file.read()
+
+    with open(reply_file, "r") as file:
+        reply_text = file.read()
 
     posts = {}
     replies = []
@@ -24,7 +30,7 @@ def create_posts():
         posts.update({Post(title=f"Post{i+1}"): Tag(type=type)})
 
         for j in range(0, 5):
-            replies.append(Reply(content=choice(reply_content)))
+            replies.append(Reply(content=reply_text))
 
     for user in users:
         if not len(posts) > 0:
