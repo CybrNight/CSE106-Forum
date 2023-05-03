@@ -4,6 +4,7 @@ from flask_login import LoginManager
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from forum.util import rebuild_db
+from time import sleep
 import sys
 
 sys.dont_write_bytecode = True
@@ -55,6 +56,8 @@ def create_app():
 def run_app(debug, rebuild=False):
     if rebuild:
         rebuild_db(test_data=debug)
+        print("Finished rebuilding!")
+    sleep(1)
     flask_app.run(debug=debug)
 
 

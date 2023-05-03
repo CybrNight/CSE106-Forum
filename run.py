@@ -35,6 +35,6 @@ if __name__ == "__main__":
     parse_args(sys.argv[1:])
 
     debug = options.get('debug') == True
-    rebuild = options.get('debug') == True
+    rebuild = options.get('rebuild') == True
 
     run_app(debug=debug, rebuild=rebuild)
