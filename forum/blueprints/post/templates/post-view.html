@@ -24,7 +24,7 @@
       <form
         class="post-reply-form"
         method="post"
-        action="{{ url_for('post_route.add_post_reply', p_title=data.title)}}"
+        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
       >
         <br />
         <div class="field">
@@ -37,10 +37,11 @@
           Add Reply
         </button>
       </form>
+      <!--This reverse broke before. Keep checking this-->
       {% for reply in data.replies|reverse %}
       <div class="reply-container">
         <!--NEED TO ADD URL TO USER PROFILE-->
-        <h2 class="reply-author">{{reply.author}}</h2>
+        <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
         <h4 class="reply-votes">Votes: <span>{{reply.upvotes}}</span></h4>
         <p>{{reply.content}}</p>
       </div>

@@ -130,7 +130,6 @@ main {
 
 .post-replies-container {
   border: 0.25em;
-  overflow-y: scroll;
 }
 
 .reply-container {
