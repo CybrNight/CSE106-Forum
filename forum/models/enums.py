@@ -23,5 +23,8 @@ class Role(Enum):
 
 
 class VoteType(Enum):
-    UP = 1
-    DOWN = -1
+    UP = "UP"
+    DOWN = "DOWN"
+
+    def __repr__(self) -> str:
+        return self.value
