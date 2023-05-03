@@ -1,11 +1,12 @@
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask import flash
+from flask import flash, escape
 from flask_login import current_user
 from markupsafe import Markup
 from flask import jsonify
 
-from forum.models import Reply, PostReply, Post
+from forum.models import Reply, PostReply, Post, PostVote, User, VoteType
 from forum import db
+import json
 
 # Creates a new flask blueprint for this file
 post_bp = Blueprint('post_bp', __name__,
@@ -27,7 +28,7 @@ def testpost():
                             p_title="testpost"))
 
 
-@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
+@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET', 'PUT'])
 def get_post(p_uuid, p_title):
     '''
     Defines Flask route to retrieve specific post
@@ -38,17 +39,17 @@ def get_post(p_uuid, p_title):
     if request.method == 'GET':
         if p_title == "testpost":
             # If testpost is being loaded, then load the first Post in db
-            post = Post.query.all()[0]
+            v_up = Post.query.all()[0]
         else:
             # Query post with UUID
-            post = Post.query.join(PostReply).filter(
+            v_up = Post.query.join(PostReply).filter(
                 Post.uuid == p_uuid).first()
 
         # If we found the post then retrieve its data
-        if post:
+        if v_up:
             replies = []
             # Get each PostReply entry from the post
-            for p_reply in post.post_replies:
+            for p_reply in v_up.post_replies:
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
 
@@ -56,20 +57,76 @@ def get_post(p_uuid, p_title):
                 replies.append(
                     {"author": user.name,
                      "content": reply.content,
-                     "upvotes": reply.total_votes})
+                     "votes": reply.total_votes})
 
             # For the queried post, store its metadata and replies data in JSON
-            post_data = {"uuid": post.uuid,
-                         "title": post.title,
-                         "content": post.content,
-                         "upvotes": post.total_votes,
-                         "tags": post.tag_list,
+            post_data = {"uuid": v_up.uuid,
+                         "title": v_up.title,
+                         "content": v_up.content,
+                         "votes": v_up.total_votes,
+                         "tags": v_up.tag_list,
                          "replies": replies}
-            print(post_data)
 
             # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
 
+    elif request.method == 'PUT':
+        post = Post.query.filter_by(uuid=p_uuid).first()
+
+        if not current_user.is_authenticated:
+            return {"votes": post.total_votes}
+
+        data = request.json
+
+        if post:
+            # Get the incoming VoteType
+            v_type = VoteType(data["vote-type"])
+
+            # Query all upvotes for Post
+            v_up = PostVote.query.join(
+                User).filter((User.uuid == current_user.uuid) &
+                             (PostVote.vote == VoteType.UP) &
+                             (Post.uuid == p_uuid)).all()
+
+            # Query all downvotes for Post
+            v_down = PostVote.query.join(
+                User).filter((User.uuid == current_user.uuid) &
+                             (PostVote.vote == VoteType.DOWN) &
+                             (Post.uuid == p_uuid)).all()
+
+            # If user is trying to upvote post
+            if v_type == VoteType.UP:
+                # Check if the user has downvoted the post, and remove the downvote
+                if len(v_down) > 0:
+                    for v in v_down:
+                        db.session.delete(v)
+                    db.session.commit()
+
+                # If user has not upvoted the post, then add their vote
+                if len(v_up) == 0:
+                    db.session.add(PostVote(post=post,
+                                            user=current_user, vote=VoteType.UP))
+                else:  # If the user has already upvoted then remove their upvote
+                    for v in v_up:
+                        db.session.delete(v)
+                db.session.commit()
+            elif v_type == VoteType.DOWN:
+                # Check if the user has downvoted the post, and remove the downvote
+                if len(v_up) > 0:
+                    for v in v_up:
+                        db.session.delete(v)
+                    db.session.commit()
+
+                if len(v_down) == 0:
+                    db.session.add(PostVote(post=post,
+                                            user=current_user, vote=VoteType.DOWN))
+                else:  # If user has already downvoted, then remove their downvote
+                    for v in v_down:
+                        db.session.delete(v)
+
+            # Commit all changes made and return new vote count to front-end
+            db.session.commit()
+            return {"votes": post.total_votes}
     # If post not found, then 404
     return "Post does not exist", 404
 
@@ -85,9 +142,9 @@ def add_post_reply(p_uuid, p_title):
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
         # Create warning message
-        message = Markup('< h1 > <a href="/login" > Login < /a > or'
-                         '< a href="/signup" > Create Account < /a > to post'
-                         'reply < /h1 >')
+        message = Markup('<h1><a href="/login">Login</a> or'
+                         '<a href="/signup">Create Account</a> to post '
+                         'reply</h1>')
 
         # Add message to flash list and reload page
         flash(message, 'error')
@@ -149,7 +206,7 @@ def get_posts():
 
             posts_data.append({"uuid": post.uuid,
                                "title": post.title,
-                               "upvotes": post.total_votes,
+                               "votes": post.total_votes,
                                "author": post.user.name,
                                "date": post.date,
                                "tags": tags})

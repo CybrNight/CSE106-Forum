@@ -19,6 +19,12 @@ class User(UserMixin, db.Model):
                                    back_populates="user",
                                    lazy="joined",
                                    cascade='all, delete-orphan')
+
+    post_votes = db.relationship("PostVote",
+                                 back_populates="user",
+                                 lazy="joined",
+                                 cascade='all, delete-orphan')
+
     posts = db.relationship("Post",
                             lazy="subquery",
                             backref=db.backref('user', lazy=True))
@@ -36,7 +42,7 @@ class User(UserMixin, db.Model):
         self.role = role
 
         # When a new User object is initialized, set UUID
-        self.uuid = gen_model_uuid(db, User)
+        self.uuid = gen_model_uuid(User)
 
         # Set email to generic template based on first+last name
         if self.email == "default":

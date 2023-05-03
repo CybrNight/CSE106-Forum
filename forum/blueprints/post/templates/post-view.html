@@ -1,5 +1,5 @@
-{% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
-<script src="{{ url_for('static',filename='js/viewPost.js') }}"></script>
+{% extends "base-new.html" %} {$ block content %} {% block head %} {{super()}}
+<script src="{{ url_for('static',filename='js/postView.js') }}"></script>
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
@@ -8,13 +8,20 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='css/alerts.css') }}"
 />
-{% endblock %}
+<script>
+  const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
     <h1 id="post-title">{{data.title}}</h1>
     <p id="post-content">{{data.content}}</p>
   </article>
+  <div class="post-metric">  
+    <button id="post-upvote" class="fa fa-thumbs-up"></button>
+    <button id="post-downvote" class="fa fa-thumbs-down"></button>
+    <h3 class="post-votes">Votes:<span id="post-vote-count">{{data.votes}}</span></div>
   <main>
     <div class="post-replies-container">
       {% with messages = get_flashed_messages(with_categories=true) %} {% for
@@ -42,7 +49,7 @@
       <div class="reply-container">
         <!--NEED TO ADD URL TO USER PROFILE-->
         <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
-        <h4 class="reply-votes">Votes: <span>{{reply.upvotes}}</span></h4>
+        <h4 class="reply-votes">Votes: <span>{{reply.votes}}</span></h4>
         <p>{{reply.content}}</p>
       </div>
       {% endfor %}

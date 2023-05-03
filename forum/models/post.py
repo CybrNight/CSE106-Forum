@@ -1,7 +1,37 @@
 from datetime import datetime
 from forum import db
 from forum.util.hash import gen_model_uuid
-from forum.models.enums import TagType
+from forum.models.enums import TagType, VoteType
+
+
+class PostVote(db.Model):
+    '''Defines an association object linking a User to a up/down vote on a Reply'''
+    __tablename__ = "post_vote"
+
+    id = db.Column(db.Integer,
+                   primary_key=True)
+
+    # Define user_uuid ForeignKey column
+    user_uuid = db.Column(db.VARCHAR(255),
+                          db.ForeignKey("user.uuid"),
+                          nullable=False)
+
+    # Define post_uuid ForeignKey column
+    post_uuid = db.Column(db.VARCHAR(255),
+                          db.ForeignKey("post.uuid"),
+                          nullable=False)
+
+    # Define table unique contrains
+    __table_args__ = (db.UniqueConstraint(user_uuid, post_uuid),)
+
+    # Define user, post, and reply association
+    user = db.relationship("User", back_populates="post_votes")
+    post = db.relationship("Post", back_populates="post_votes")
+    vote = db.Column(db.Enum(VoteType))
+
+    # Define method to retrieve an entry as a tuple
+    def get(self):
+        return (self.user, self.post)
 
 
 class PostReply(db.Model):
@@ -69,24 +99,34 @@ class Post(db.Model):
                                    lazy="joined",
                                    cascade='all, delete-orphan')
 
+    post_votes = db.relationship("PostVote",
+                                 back_populates="post",
+                                 lazy="joined",
+                                 cascade='all, delete-orphan')
+
     def __init__(self, title, content=""):
         self.title = title
         self.content = content
         self.date = datetime.now().date().strftime("%d %b %Y")
-        self.upvotes = 1
+        self.upvotes = 0
         self.downvotes = 0
 
-        self.uuid = gen_model_uuid(db, Post, 8)
+        self.uuid = gen_model_uuid(Post, 8)
         db.session.commit()
-
-    def upvote(self):
-        self.upvotes += 1
-
-    def downvote(self):
-        self.downvote += 1
 
     @property
     def total_votes(self):
+        up = 0
+        down = 0
+
+        for p_vote in self.post_votes:
+            if VoteType(p_vote.vote) == VoteType.UP:
+                up += 1
+            else:
+                down += 1
+        self.upvotes = up
+        self.downvotes = down
+        db.session.commit()
         return self.upvotes - self.downvotes
 
     @property
@@ -120,13 +160,7 @@ class Reply(db.Model):
         self.upvotes = 1
         self.downvotes = 0
         self.content = content
-        self.uuid = gen_model_uuid(db, Reply, 8)
-
-    def upvote(self):
-        self.upvotes += 1
-
-    def downvote(self):
-        self.downvote += 1
+        self.uuid = gen_model_uuid(Reply, 8)
 
     @property
     def total_votes(self):

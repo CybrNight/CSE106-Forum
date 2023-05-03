@@ -60,5 +60,4 @@ def profile():
                       "upvotes": p.upvotes,
                       "downvotes": p.downvotes})
 
-    print(posts)
     return render_template('profile.html', data=posts)
