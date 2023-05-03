@@ -108,7 +108,7 @@ class Post(db.Model):
         self.title = title
         self.content = content
         self.date = datetime.now().date().strftime("%d %b %Y")
-        self.upvotes = 1
+        self.upvotes = 0
         self.downvotes = 0
 
         self.uuid = gen_model_uuid(Post, 8)
@@ -116,7 +116,18 @@ class Post(db.Model):
 
     @property
     def total_votes(self):
-        return len(self.post_votes)+1
+        up = 0
+        down = 0
+
+        for p_vote in self.post_votes:
+            if VoteType(p_vote.vote) == VoteType.UP:
+                up += 1
+            else:
+                down += 1
+        self.upvotes = up
+        self.downvotes = down
+        db.session.commit()
+        return self.upvotes - self.downvotes
 
     @property
     def tag_list(self):
