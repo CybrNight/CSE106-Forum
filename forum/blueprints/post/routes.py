@@ -1,11 +1,12 @@
 from flask import Blueprint, redirect, render_template, request, url_for
-from flask import flash
+from flask import flash, escape
 from flask_login import current_user
 from markupsafe import Markup
 from flask import jsonify
 
 from forum.models import Reply, PostReply, Post
 from forum import db
+import json
 
 # Creates a new flask blueprint for this file
 post_bp = Blueprint('post_bp', __name__,
@@ -27,7 +28,7 @@ def testpost():
                             p_title="testpost"))
 
 
-@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET'])
+@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET', 'PUT'])
 def get_post(p_uuid, p_title):
     '''
     Defines Flask route to retrieve specific post
@@ -56,13 +57,13 @@ def get_post(p_uuid, p_title):
                 replies.append(
                     {"author": user.name,
                      "content": reply.content,
-                     "upvotes": reply.total_votes})
+                     "votes": reply.total_votes})
 
             # For the queried post, store its metadata and replies data in JSON
             post_data = {"uuid": post.uuid,
                          "title": post.title,
                          "content": post.content,
-                         "upvotes": post.total_votes,
+                         "votes": post.total_votes,
                          "tags": post.tag_list,
                          "replies": replies}
             print(post_data)
@@ -70,7 +71,21 @@ def get_post(p_uuid, p_title):
             # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
 
-    # If post not found, then 404
+    elif request.method == 'PUT':
+        data = request.json
+        post = Post.query.join(PostReply).filter(
+            Post.uuid == p_uuid).first()
+
+        if post:
+            if data['type'] == "upvote":
+                post.upvote()
+            elif data['type'] == "downvote":
+                post.downvote()
+
+        db.session.commit()
+        return {"votes": post.total_votes}
+
+        # If post not found, then 404
     return "Post does not exist", 404
 
 
@@ -149,7 +164,7 @@ def get_posts():
 
             posts_data.append({"uuid": post.uuid,
                                "title": post.title,
-                               "upvotes": post.total_votes,
+                               "votes": post.total_votes,
                                "author": post.user.name,
                                "date": post.date,
                                "tags": tags})

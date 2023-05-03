@@ -1,5 +1,5 @@
-{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
-<script src="{{ url_for('static',filename='js/viewPost.js') }}"></script>
+{% extends "base-new.html" %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/postCreate.js') }}"></script>
 <link
   rel="stylesheet"
   href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
@@ -10,11 +10,6 @@
 />
 {% endblock %}
 <div class="post-container">
-  <article>
-    <!--This header should be left-aligned-->
-    <h1 id="post-title">{{data.title}}</h1>
-    <p id="post-content">{{data.content}}</p>
-  </article>
   <form
     method="post"
     action="{{ url_for('post_bp.add_post_reply', p_title=data.title)}}"
@@ -40,17 +35,5 @@
       Add Reply
     </button>
   </form>
-  <br />
-  <main>
-    <div class="comment-section">
-      {% for reply in data.replies %}
-      <div class="comment-container">
-        <h2>{{reply.author}}</h2>
-        <p>{{reply.content}}</p>
-        <h4>{{reply.upvotes}}/{{reply.downvotes}}</h4>
-      </div>
-      {% endfor %}
-    </div>
-  </main>
   {% endblock %}
 </div>

@@ -15,8 +15,8 @@ def create_posts():
 
     posts = {}
     replies = []
-    reply_content = ["#PETA FOREVER YOU PEOPLE ARE MURDERERS",
-                     "I love meat", "BEEF, It's what's for dinner b*tch"]
+    reply_content = ["TEST1",
+                     "TEST2", "TEST3"]
     users = User.query.all()
 
     for i in range(0, 25):

@@ -83,7 +83,7 @@ class Post(db.Model):
         self.upvotes += 1
 
     def downvote(self):
-        self.downvote += 1
+        self.downvotes += 1
 
     @property
     def total_votes(self):
