@@ -18,7 +18,7 @@ class PostView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "type": "upvote" })
+            body: JSON.stringify({ "vote-type": "UP" })
         });
 
         if (response.ok) {
@@ -36,7 +36,7 @@ class PostView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "type": "downvote" })
+            body: JSON.stringify({ "vote-type": "DOWN" })
         });
 
         if (response.ok) {
