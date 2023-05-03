@@ -17,7 +17,7 @@
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  float: left;
+  float: right;
 }
 
 .navbar-item {
@@ -40,15 +40,14 @@
   background-color: #111;
 }
 
-.navbar-item {
-}
-
 .navbar .navbar-brand {
+  float: left;
   padding: 0 15px;
   line-height: 50px;
   font-weight: bold;
   font-size: 18px;
 }
+
 
 body {
   height: 100%;

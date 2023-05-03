@@ -1,16 +1,12 @@
-{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
+{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
 <script src="{{ url_for('static',filename='js/posts.js') }}"></script>
 <link
   rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+  href="{{ url_for('static', filename='css/base-new.css') }}"
 />
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/all-posts.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 />
 {% endblock %}
 <h1 class="title">Welcome, {{ current_user.name }}!</h1>
