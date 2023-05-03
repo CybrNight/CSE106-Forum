@@ -38,7 +38,7 @@ class CourseApp {
                 postTitleCell.innerHTML = `<a href="/posts/${post.uuid}/${post.title}/">${post.title}</a>`;
                 postAuthorCell.innerText = post.author;
                 postDateCell.innerText = post.date;
-                postUpvotesCell.innerText = post.upvotes;
+                postUpvotesCell.innerText = post.votes;
                 postTagCell.innerText = post.tags;
             });
         } else {
