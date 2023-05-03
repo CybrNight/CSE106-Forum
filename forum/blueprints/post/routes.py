@@ -66,7 +66,6 @@ def get_post(p_uuid, p_title):
                          "votes": v_up.total_votes,
                          "tags": v_up.tag_list,
                          "replies": replies}
-            print(post_data)
 
             # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
@@ -107,8 +106,10 @@ def get_post(p_uuid, p_title):
                 if len(v_up) == 0:
                     db.session.add(PostVote(post=post,
                                             user=current_user, vote=VoteType.UP))
-                    
-
+                else:  # If the user has already upvoted then remove their upvote
+                    for v in v_up:
+                        db.session.delete(v)
+                db.session.commit()
             elif v_type == VoteType.DOWN:
                 # Check if the user has downvoted the post, and remove the downvote
                 if len(v_up) > 0:
@@ -119,6 +120,9 @@ def get_post(p_uuid, p_title):
                 if len(v_down) == 0:
                     db.session.add(PostVote(post=post,
                                             user=current_user, vote=VoteType.DOWN))
+                else:  # If user has already downvoted, then remove their downvote
+                    for v in v_down:
+                        db.session.delete(v)
 
             # Commit all changes made and return new vote count to front-end
             db.session.commit()
