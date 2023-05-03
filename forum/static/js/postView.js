@@ -55,11 +55,11 @@ window.onload = function () {
 
     c = new PostView(postTitle, postContent, btnUpvote, btnDownvote);
 
-    btnUpvote.addEventListener('click', button => {
+    btnUpvote.addEventListener('mouseup', button => {
         c.upvotePost();
     })
 
-    btnDownvote.addEventListener('click', button => {
+    btnDownvote.addEventListener('mouseup', button => {
         c.downvotePost();
     })
 }
