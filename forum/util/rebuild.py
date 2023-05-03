@@ -22,8 +22,6 @@ def create_posts():
 
     posts = {}
     replies = []
-    reply_content = ["TEST1",
-                     "TEST2", "TEST3"]
     users = User.query.all()
 
     for i in range(0, 25):
@@ -48,7 +46,6 @@ def create_posts():
             for j in range(1, a):
                 shuffle(replies)
                 reply = replies.pop()
-                reply.content = choice(reply_content)
                 db.session.add_all([user, post, reply])
                 db.session.add(PostReply(user=user, post=post, reply=reply))
 
@@ -121,6 +118,8 @@ def rebuild_db(test_data=False):
     # Add default admin account
     db.session.add(User(role=Role.ADMIN, name="ADMIN",
                         email="admin@me.com"))
+    db.session.add(User(role=Role.DEFAULT, name="test",
+                        email="test@me.com"))
     print("Created ADMIN user account")
 
     db.session.commit()
