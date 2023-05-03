@@ -42,7 +42,7 @@ class User(UserMixin, db.Model):
         self.role = role
 
         # When a new User object is initialized, set UUID
-        self.uuid = gen_model_uuid(db, User)
+        self.uuid = gen_model_uuid(User)
 
         # Set email to generic template based on first+last name
         if self.email == "default":

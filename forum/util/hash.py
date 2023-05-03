@@ -10,7 +10,7 @@ def gen_salt_hash(password, salt, method="sha256"):
     return generate_password_hash(password+str(salt), method=method)
 
 
-def gen_model_uuid(db, model, size=32):
+def gen_model_uuid(model, size=32):
     '''
     Generates new UUID for specified model and char length
 
@@ -22,6 +22,8 @@ def gen_model_uuid(db, model, size=32):
     Returns:
         uuid (str): Resulting UUID
     '''
+    from forum import db
+
     temp_uuid = uuid.uuid4().hex[:size]
     exists = True
 

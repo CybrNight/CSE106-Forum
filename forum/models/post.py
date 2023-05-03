@@ -1,7 +1,7 @@
 from datetime import datetime
 from forum import db
 from forum.util.hash import gen_model_uuid
-from forum.models.enums import TagType
+from forum.models.enums import TagType, VoteType
 
 
 class PostVote(db.Model):
@@ -27,7 +27,7 @@ class PostVote(db.Model):
     # Define user, post, and reply association
     user = db.relationship("User", back_populates="post_votes")
     post = db.relationship("Post", back_populates="post_votes")
-    vote = db.Column(db.Integer)
+    vote = db.Column(db.Enum(VoteType))
 
     # Define method to retrieve an entry as a tuple
     def get(self):
@@ -111,14 +111,8 @@ class Post(db.Model):
         self.upvotes = 1
         self.downvotes = 0
 
-        self.uuid = gen_model_uuid(db, Post, 8)
+        self.uuid = gen_model_uuid(Post, 8)
         db.session.commit()
-
-    def upvote(self):
-        self.upvotes += 1
-
-    def downvote(self):
-        self.downvotes += 1
 
     @property
     def total_votes(self):
@@ -155,13 +149,7 @@ class Reply(db.Model):
         self.upvotes = 1
         self.downvotes = 0
         self.content = content
-        self.uuid = gen_model_uuid(db, Reply, 8)
-
-    def upvote(self):
-        self.upvotes += 1
-
-    def downvote(self):
-        self.downvote += 1
+        self.uuid = gen_model_uuid(Reply, 8)
 
     @property
     def total_votes(self):
