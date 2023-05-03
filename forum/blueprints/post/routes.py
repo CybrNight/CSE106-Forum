@@ -4,7 +4,7 @@ from flask_login import current_user
 from markupsafe import Markup
 from flask import jsonify
 
-from forum.models import Reply, PostReply, Post
+from forum.models import Reply, PostReply, Post, PostVote, User
 from forum import db
 import json
 
@@ -39,17 +39,17 @@ def get_post(p_uuid, p_title):
     if request.method == 'GET':
         if p_title == "testpost":
             # If testpost is being loaded, then load the first Post in db
-            post = Post.query.all()[0]
+            post_votes = Post.query.all()[0]
         else:
             # Query post with UUID
-            post = Post.query.join(PostReply).filter(
+            post_votes = Post.query.join(PostReply).filter(
                 Post.uuid == p_uuid).first()
 
         # If we found the post then retrieve its data
-        if post:
+        if post_votes:
             replies = []
             # Get each PostReply entry from the post
-            for p_reply in post.post_replies:
+            for p_reply in post_votes.post_replies:
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
 
@@ -60,11 +60,11 @@ def get_post(p_uuid, p_title):
                      "votes": reply.total_votes})
 
             # For the queried post, store its metadata and replies data in JSON
-            post_data = {"uuid": post.uuid,
-                         "title": post.title,
-                         "content": post.content,
-                         "votes": post.total_votes,
-                         "tags": post.tag_list,
+            post_data = {"uuid": post_votes.uuid,
+                         "title": post_votes.title,
+                         "content": post_votes.content,
+                         "votes": post_votes.total_votes,
+                         "tags": post_votes.tag_list,
                          "replies": replies}
             print(post_data)
 
@@ -72,18 +72,19 @@ def get_post(p_uuid, p_title):
             return render_template("post-view.html", data=post_data)
 
     elif request.method == 'PUT':
+        post = Post.query.filter_by(uuid=p_uuid).first()
+
+        if not current_user.is_authenticated:
+            return {"votes": post.total_votes}
+
         data = request.json
-        post = Post.query.join(PostReply).filter(
-            Post.uuid == p_uuid).first()
-
-        if post:
-            if data['type'] == "upvote":
-                post.upvote()
-            elif data['type'] == "downvote":
-                post.downvote()
-
-        db.session.commit()
-        return {"votes": post.total_votes}
+        post_votes = PostVote.query.join(Post).join(
+            User).filter((User.uuid == current_user.uuid) & (Post.uuid == p_uuid)).all()
+        if len(post_votes) == 0 and post:
+            db.session.add(PostVote(post=post,
+                           user=current_user, vote=1))
+            db.session.commit()
+            return {"votes": post.total_votes}
 
         # If post not found, then 404
     return "Post does not exist", 404
@@ -100,9 +101,9 @@ def add_post_reply(p_uuid, p_title):
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
         # Create warning message
-        message = Markup('< h1 > <a href="/login" > Login < /a > or'
-                         '< a href="/signup" > Create Account < /a > to post'
-                         'reply < /h1 >')
+        message = Markup('<h1><a href="/login">Login</a> or'
+                         '<a href="/signup">Create Account</a> to post '
+                         'reply</h1>')
 
         # Add message to flash list and reload page
         flash(message, 'error')

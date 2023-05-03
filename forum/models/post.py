@@ -4,6 +4,36 @@ from forum.util.hash import gen_model_uuid
 from forum.models.enums import TagType
 
 
+class PostVote(db.Model):
+    '''Defines an association object linking a User to a up/down vote on a Reply'''
+    __tablename__ = "post_vote"
+
+    id = db.Column(db.Integer,
+                   primary_key=True)
+
+    # Define user_uuid ForeignKey column
+    user_uuid = db.Column(db.VARCHAR(255),
+                          db.ForeignKey("user.uuid"),
+                          nullable=False)
+
+    # Define post_uuid ForeignKey column
+    post_uuid = db.Column(db.VARCHAR(255),
+                          db.ForeignKey("post.uuid"),
+                          nullable=False)
+
+    # Define table unique contrains
+    __table_args__ = (db.UniqueConstraint(user_uuid, post_uuid),)
+
+    # Define user, post, and reply association
+    user = db.relationship("User", back_populates="post_votes")
+    post = db.relationship("Post", back_populates="post_votes")
+    vote = db.Column(db.Integer)
+
+    # Define method to retrieve an entry as a tuple
+    def get(self):
+        return (self.user, self.post)
+
+
 class PostReply(db.Model):
     '''Defines an association object linking a User to a Reply on a Post'''
     __tablename__ = "post_reply"
@@ -69,6 +99,11 @@ class Post(db.Model):
                                    lazy="joined",
                                    cascade='all, delete-orphan')
 
+    post_votes = db.relationship("PostVote",
+                                 back_populates="post",
+                                 lazy="joined",
+                                 cascade='all, delete-orphan')
+
     def __init__(self, title, content=""):
         self.title = title
         self.content = content
@@ -87,7 +122,7 @@ class Post(db.Model):
 
     @property
     def total_votes(self):
-        return self.upvotes - self.downvotes
+        return len(self.post_votes)+1
 
     @property
     def tag_list(self):

@@ -19,6 +19,12 @@ class User(UserMixin, db.Model):
                                    back_populates="user",
                                    lazy="joined",
                                    cascade='all, delete-orphan')
+
+    post_votes = db.relationship("PostVote",
+                                 back_populates="user",
+                                 lazy="joined",
+                                 cascade='all, delete-orphan')
+
     posts = db.relationship("Post",
                             lazy="subquery",
                             backref=db.backref('user', lazy=True))
