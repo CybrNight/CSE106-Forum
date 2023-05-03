@@ -4,7 +4,7 @@ from flask_login import current_user
 from markupsafe import Markup
 from flask import jsonify
 
-from forum.models import Reply, PostReply, Post, PostVote, User
+from forum.models import Reply, PostReply, Post, PostVote, User, VoteType
 from forum import db
 import json
 
@@ -39,17 +39,17 @@ def get_post(p_uuid, p_title):
     if request.method == 'GET':
         if p_title == "testpost":
             # If testpost is being loaded, then load the first Post in db
-            post_votes = Post.query.all()[0]
+            v_up = Post.query.all()[0]
         else:
             # Query post with UUID
-            post_votes = Post.query.join(PostReply).filter(
+            v_up = Post.query.join(PostReply).filter(
                 Post.uuid == p_uuid).first()
 
         # If we found the post then retrieve its data
-        if post_votes:
+        if v_up:
             replies = []
             # Get each PostReply entry from the post
-            for p_reply in post_votes.post_replies:
+            for p_reply in v_up.post_replies:
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
 
@@ -60,11 +60,11 @@ def get_post(p_uuid, p_title):
                      "votes": reply.total_votes})
 
             # For the queried post, store its metadata and replies data in JSON
-            post_data = {"uuid": post_votes.uuid,
-                         "title": post_votes.title,
-                         "content": post_votes.content,
-                         "votes": post_votes.total_votes,
-                         "tags": post_votes.tag_list,
+            post_data = {"uuid": v_up.uuid,
+                         "title": v_up.title,
+                         "content": v_up.content,
+                         "votes": v_up.total_votes,
+                         "tags": v_up.tag_list,
                          "replies": replies}
             print(post_data)
 
@@ -78,15 +78,52 @@ def get_post(p_uuid, p_title):
             return {"votes": post.total_votes}
 
         data = request.json
-        post_votes = PostVote.query.join(Post).join(
-            User).filter((User.uuid == current_user.uuid) & (Post.uuid == p_uuid)).all()
-        if len(post_votes) == 0 and post:
-            db.session.add(PostVote(post=post,
-                           user=current_user, vote=1))
+
+        if post:
+            # Get the incoming VoteType
+            v_type = VoteType(data["vote-type"])
+
+            # Query all upvotes for Post
+            v_up = PostVote.query.join(
+                User).filter((User.uuid == current_user.uuid) &
+                             (PostVote.vote == VoteType.UP) &
+                             (Post.uuid == p_uuid)).all()
+
+            # Query all downvotes for Post
+            v_down = PostVote.query.join(
+                User).filter((User.uuid == current_user.uuid) &
+                             (PostVote.vote == VoteType.DOWN) &
+                             (Post.uuid == p_uuid)).all()
+
+            # If user is trying to upvote post
+            if v_type == VoteType.UP:
+                # Check if the user has downvoted the post, and remove the downvote
+                if len(v_down) > 0:
+                    for v in v_down:
+                        db.session.delete(v)
+                    db.session.commit()
+
+                # If user has not upvoted the post, then add their vote
+                if len(v_up) == 0:
+                    db.session.add(PostVote(post=post,
+                                            user=current_user, vote=VoteType.UP))
+                    
+
+            elif v_type == VoteType.DOWN:
+                # Check if the user has downvoted the post, and remove the downvote
+                if len(v_up) > 0:
+                    for v in v_up:
+                        db.session.delete(v)
+                    db.session.commit()
+
+                if len(v_down) == 0:
+                    db.session.add(PostVote(post=post,
+                                            user=current_user, vote=VoteType.DOWN))
+
+            # Commit all changes made and return new vote count to front-end
             db.session.commit()
             return {"votes": post.total_votes}
-
-        # If post not found, then 404
+    # If post not found, then 404
     return "Post does not exist", 404
 
 
