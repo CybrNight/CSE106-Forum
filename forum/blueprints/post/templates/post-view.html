@@ -1,4 +1,4 @@
-{% extends "base-new.html" %} {% block content %} {% block head %}
+{% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
 <script src="{{ url_for('static',filename='js/postView.js') }}"></script>
 <link
   rel="stylesheet"

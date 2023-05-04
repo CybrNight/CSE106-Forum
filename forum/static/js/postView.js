@@ -25,15 +25,14 @@ class PostView {
             const data = await response.json();
             this.postCount.innerText = data.votes;
 
-            if ($("#post-upvote").hasClass("upvote")) {
-                $("#post-upvote").removeClass("upvote")
+            if (!$("#post-upvote").hasClass("upvote")) {
+                $("#post-upvote").addClass("upvote");
             } else {
-                "upvote"
-                $("#post-upvote").addClass("upvote")
+                $("#post-upvote").removeClass("upvote");
             }
 
             if ($("#post-downvote").hasClass("downvote")) {
-                $("#post-downvote").removeClass("downvote")
+                $("#post-downvote").removeClass("downvote");
             }
         }
     }
@@ -54,14 +53,14 @@ class PostView {
             const data = await response.json();
             this.postCount.innerText = data.votes;
 
-            if ($("#post-downvote").hasClass("downvote")) {
-                $("#post-downvote").removeClass("downvote")
+            if (!$("#post-downvote").hasClass("downvote")) {
+                $("#post-downvote").addClass("downvote");
             } else {
-                $("#post-downvote").addClass("downvote")
+                $("#post-downvote").removeClass("downvote");
             }
 
             if ($("#post-upvote").hasClass("upvote")) {
-                $("#post-upvote").removeClass("upvote")
+                $("#post-upvote").removeClass("upvote");
             }
         }
     }
@@ -75,6 +74,13 @@ window.onload = function () {
     const btnDownvote = document.getElementById("post-downvote")
 
     c = new PostView(postTitle, postContent, btnUpvote, btnDownvote);
+
+    console.log(post.userVote)
+    if (post.userVote === "DOWN") {
+        $("#post-downvote").addClass("downvote");
+    } else if (post.userVote === "UP") {
+        $("#post-upvote").addClass("upvote");
+    }
 
     btnUpvote.addEventListener('mouseup', button => {
         c.upvotePost();

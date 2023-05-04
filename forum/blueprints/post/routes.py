@@ -47,8 +47,13 @@ def get_post(p_uuid, p_title):
 
         # If we found the post then retrieve its data
         if v_up:
+            user_vote = VoteType.DEFAULT
             replies = []
             # Get each PostReply entry from the post
+            for p_vote in v_up.post_votes:
+                if p_vote.user == current_user:
+                    user_vote = p_vote.vote
+
             for p_reply in v_up.post_replies:
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
@@ -64,6 +69,7 @@ def get_post(p_uuid, p_title):
                          "title": v_up.title,
                          "content": v_up.content,
                          "votes": v_up.total_votes,
+                         "userVote": user_vote.value,
                          "tags": v_up.tag_list,
                          "replies": replies}
 
