@@ -55,9 +55,14 @@ def profile():
     posts = []
     # For every post in query, add to JSON to send to template
     for p in post:
+        tags = []
+        for tag in p.tags:
+            tags.append(tag.type.value)
+
         posts.append({"title": p.title,
                       "content": p.content,
                       "upvotes": p.upvotes,
-                      "downvotes": p.downvotes})
+                      "downvotes": p.downvotes,
+                      "tags": tags})
 
     return render_template('profile.html', data=posts)

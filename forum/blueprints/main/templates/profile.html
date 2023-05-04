@@ -31,7 +31,9 @@
             <td>
               <div class="tags-container">
                 <div>
-                  <p class="tags">some tag</p>
+                  {% for tag in post.tags %}
+                    <p class="tags">{{ tag }}</p>
+                  {% endfor %}
                 </div>
                 <div class="votes">
                   <p class="upvote-downvote-text">{{ post.upvotes }}</p>
@@ -45,14 +47,6 @@
         </table>
         <br>
         {% endfor %}
-    </div>
-    <div class="bio">
-        <h1 class="bio-title">Bio</h1>
-        <div class="profile-pic-container">
-            <img class="profile-pic" src="https://www.alleycat.org/wp-content/uploads/2021/02/344x361_FoundACat.jpg" 
-                alt="profile-pic">
-        </div>
-            
     </div>
 </div>
 
