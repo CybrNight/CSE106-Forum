@@ -97,7 +97,7 @@ class Reply(db.Model):
         up = 0
         down = 0
 
-        for p_vote in self.post_votes:
+        for p_vote in self.reply_votes:
             if VoteType(p_vote.vote) == VoteType.UP:
                 up += 1
             else:
