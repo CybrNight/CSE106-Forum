@@ -48,12 +48,12 @@ class PostReply(db.Model):
 
     # Define post_uuid ForeignKey column
     post_uuid = db.Column(db.VARCHAR(255),
-                          db.ForeignKey("post.uuid"),
+                          db.ForeignKey("post.id"),
                           nullable=False)
 
     # Define reply_uuid ForeignKey column
     reply_uuid = db.Column(db.VARCHAR(255),
-                           db.ForeignKey("reply.uuid"),
+                           db.ForeignKey("reply.id"),
                            nullable=False)
 
     # Define table unique contrains

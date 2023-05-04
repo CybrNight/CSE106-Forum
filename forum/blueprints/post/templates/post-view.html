@@ -1,17 +1,19 @@
-{% extends "base-new.html" %} {$ block content %} {% block head %} {{super()}}
+{% extends "base-new.html" %} {% block content %} {% block head %}
 <script src="{{ url_for('static',filename='js/postView.js') }}"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/base-new.css') }}"
+/>
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
 />
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/alerts.css') }}"
-/>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
 <script>
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
 </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
@@ -29,7 +31,7 @@
       <div class="{{ category }}">{{ message }}</div>
       {% endfor %} {% endwith %}
       <form
-        class="post-reply-form"
+        class="post-form"
         method="post"
         action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
       >

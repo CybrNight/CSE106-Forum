@@ -48,7 +48,7 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.VARCHAR(255), unique=True, nullable=False)
-    title = db.Column(db.String, unique=True)
+    title = db.Column(db.String, unique=False)
     author_id = db.Column(db.VARCHAR(255), db.ForeignKey(
         "user.uuid"), nullable=False)
     content = db.Column(db.VARCHAR)
@@ -81,7 +81,7 @@ class Post(db.Model):
 
     @property
     def total_votes(self):
-        up = 1
+        up = 0
         down = 0
 
         for p_vote in self.post_votes:

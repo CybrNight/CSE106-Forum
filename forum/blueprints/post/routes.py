@@ -1,11 +1,12 @@
 from flask import Blueprint, redirect, render_template, request, url_for
 from flask import flash, escape
-from flask_login import current_user
+from flask_login import current_user, login_required
 from markupsafe import Markup
 from flask import jsonify
 
-from forum.models import Reply, PostReply, Post, PostVote, User, VoteType
+from forum.models import Reply, PostReply, Post, PostVote, User, VoteType, TagType, Tag
 from forum import db
+from random import choice
 import json
 
 # Creates a new flask blueprint for this file
@@ -42,8 +43,7 @@ def get_post(p_uuid, p_title):
             v_up = Post.query.all()[0]
         else:
             # Query post with UUID
-            v_up = Post.query.join(PostReply).filter(
-                Post.uuid == p_uuid).first()
+            v_up = Post.query.filter_by(uuid=p_uuid).first()
 
         # If we found the post then retrieve its data
         if v_up:
@@ -154,10 +154,11 @@ def add_post_reply(p_uuid, p_title):
 
     # Get the reply content from the form
     content = request.form.get('reply-content')
-    post = Post.query.join(PostReply).filter(Post.title == p_title).first()
+    post = Post.query.filter_by(uuid=p_uuid).first()
 
     # Create new Reply object, and add new PostReply to the database
     reply = Reply(content=content)
+    print(post.uuid)
     db.session.add(PostReply(user=current_user, post=post, reply=reply))
     db.session.commit()
 
@@ -215,8 +216,31 @@ def get_posts():
     return "Success!", 205
 
 
-@ post_bp.route("/posts/add/", methods=['POST'])
-def add_post():
-    data = request.json
-    print(data)
-    return "Success!", 205
+@post_bp.route("/posts/submit", methods=["GET", 'POST'])
+# @login_required
+def submit_post():
+    '''
+    Defines Flask route to create a Post
+
+    Methods: POST
+    '''
+    if request.method == 'POST':
+        # Get the reply content from the form
+        title = request.form.get("post-title")
+        content = request.form.get('post-content')
+
+        # Create new Reply object, and add new PostReply to the database
+        post = Post(title=title, content=content)
+        tag = Tag(choice(list(TagType)))
+        post.tags.append(tag)
+        current_user.posts.append(post)
+
+        db.session.add_all([post, tag])
+        db.session.commit()
+
+        # Reload the page to show new reply
+        return redirect(url_for("post_bp.get_post",
+                                p_uuid=post.uuid,
+                                p_title=post.title))
+    elif request.method == 'GET':
+        return render_template("post-create.html")
