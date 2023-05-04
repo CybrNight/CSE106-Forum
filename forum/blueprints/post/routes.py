@@ -154,10 +154,11 @@ def add_post_reply(p_uuid, p_title):
 
     # Get the reply content from the form
     content = request.form.get('reply-content')
-    post = Post.query.join(PostReply).filter(Post.uuid == p_uuid).first()
+    post = Post.query.filter_by(uuid=p_uuid).first()
 
     # Create new Reply object, and add new PostReply to the database
     reply = Reply(content=content)
+    print(post.uuid)
     db.session.add(PostReply(user=current_user, post=post, reply=reply))
     db.session.commit()
 
@@ -215,35 +216,31 @@ def get_posts():
     return "Success!", 205
 
 
-@post_bp.route("/posts/submit", methods=["GET"])
+@post_bp.route("/posts/submit", methods=["GET", 'POST'])
 # @login_required
 def submit_post():
-    return render_template("post-create.html")
-
-
-@ post_bp.route("/posts/create/", methods=['POST'])
-@login_required
-def create_post():
     '''
     Defines Flask route to create a Post
 
     Methods: POST
     '''
+    if request.method == 'POST':
+        # Get the reply content from the form
+        title = request.form.get("post-title")
+        content = request.form.get('post-content')
 
-    # Get the reply content from the form
-    title = request.form.get("post-title")
-    content = request.form.get('post-content')
+        # Create new Reply object, and add new PostReply to the database
+        post = Post(title=title, content=content)
+        tag = Tag(choice(list(TagType)))
+        post.tags.append(tag)
+        current_user.posts.append(post)
 
-    # Create new Reply object, and add new PostReply to the database
-    post = Post(title=title, content=content)
-    tag = Tag(choice(list(TagType)))
-    post.tags.append(tag)
-    current_user.posts.append(post)
+        db.session.add_all([post, tag])
+        db.session.commit()
 
-    db.session.add_all([post, tag])
-    db.session.commit()
-
-    # Reload the page to show new reply
-    return redirect(url_for("post_bp.get_post",
-                            p_uuid=post.uuid,
-                            p_title=post.title))
+        # Reload the page to show new reply
+        return redirect(url_for("post_bp.get_post",
+                                p_uuid=post.uuid,
+                                p_title=post.title))
+    elif request.method == 'GET':
+        return render_template("post-create.html")

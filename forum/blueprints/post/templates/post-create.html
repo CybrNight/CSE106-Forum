@@ -1,14 +1,16 @@
-{% extends "base-new.html" %} {$ block content %} {% block head %} {{super()}}
-<script src="{{ url_for('static',filename='js/postView.js') }}"></script>
+{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/postCreate.js') }}"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/base-new.css') }}"
+/>
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/post-view.css') }}"
 />
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/alerts.css') }}"
-/>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
@@ -24,7 +26,7 @@
       <form
         class="post-form"
         method="post"
-        action=" {{ url_for('post_bp.create_post') }}"
+        action=" {{ url_for('post_bp.submit_post') }}"
       >
         <br />
         <div class="field">
