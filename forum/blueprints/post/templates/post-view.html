@@ -29,7 +29,7 @@
       <div class="{{ category }}">{{ message }}</div>
       {% endfor %} {% endwith %}
       <form
-        class="post-reply-form"
+        class="post-form"
         method="post"
         action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
       >
