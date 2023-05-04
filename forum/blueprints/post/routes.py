@@ -188,15 +188,18 @@ def all_posts():
     return render_template('all-posts.html')
 
 
-@post_bp.route('/getPosts/', methods=['GET'])
+@post_bp.route('/getPosts/', methods=['PUT'])
 def get_posts():
     '''
     Define Flask route to return list of all posts as JSON data to client
 
-    Methods: GET
+    Methods: PUT
     '''
 
-    if request.method == 'GET':
+    filter = request.json
+    print(filter)
+
+    if request.method == 'PUT':
         posts = Post.query.all()
         posts_data = []
         for post in posts:
@@ -204,12 +207,13 @@ def get_posts():
             for tag in post.tags:
                 tags.append(tag.type.value)
 
-            posts_data.append({"uuid": post.uuid,
-                               "title": post.title,
-                               "votes": post.total_votes,
-                               "author": post.user.name,
-                               "date": post.date,
-                               "tags": tags})
+            if(filter["filter"] == "All" or filter["filter"] in tags):
+                posts_data.append({"uuid": post.uuid,
+                                "title": post.title,
+                                "votes": post.total_votes,
+                                "author": post.user.name,
+                                "date": post.date,
+                                "tags": tags})
         return jsonify(posts_data)
 
     return "Success!", 205

@@ -145,4 +145,20 @@ body {
     cursor: pointer;
     font-size: 8px; 
   }
+
+  #applyFilt {
+    float: right;
+  }
+  
+  select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    float: right;
+    margin-right: 5px;
+    margin-top: 4px;
+  }
+
+
   
