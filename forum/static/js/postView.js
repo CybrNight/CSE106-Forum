@@ -75,6 +75,13 @@ window.onload = function () {
 
     c = new PostView(postTitle, postContent, btnUpvote, btnDownvote);
 
+    console.log(post.userVote)
+    if (post.userVote === "DOWN") {
+        $("#post-downvote").addClass("downvote");
+    } else if (post.userVote === "UP") {
+        $("#post-upvote").addClass("upvote");
+    }
+
     btnUpvote.addEventListener('mouseup', button => {
         c.upvotePost();
     })
