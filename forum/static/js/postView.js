@@ -24,6 +24,17 @@ class PostView {
         if (response.ok) {
             const data = await response.json();
             this.postCount.innerText = data.votes;
+
+            if ($("#post-upvote").hasClass("upvote")) {
+                $("#post-upvote").removeClass("upvote")
+            } else {
+                "upvote"
+                $("#post-upvote").addClass("upvote")
+            }
+
+            if ($("#post-downvote").hasClass("downvote")) {
+                $("#post-downvote").removeClass("downvote")
+            }
         }
     }
 
@@ -42,6 +53,16 @@ class PostView {
         if (response.ok) {
             const data = await response.json();
             this.postCount.innerText = data.votes;
+
+            if ($("#post-downvote").hasClass("downvote")) {
+                $("#post-downvote").removeClass("downvote")
+            } else {
+                $("#post-downvote").addClass("downvote")
+            }
+
+            if ($("#post-upvote").hasClass("upvote")) {
+                $("#post-upvote").removeClass("upvote")
+            }
         }
     }
 }

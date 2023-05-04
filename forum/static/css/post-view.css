@@ -99,6 +99,14 @@ h6 {
   margin-right: -10%;
 }
 
+.post-metric .fa.upvote {
+  color: orange;
+}
+
+.post-metric .fa.downvote {
+  color: cornflowerblue;
+}
+
 .post-metric h3 {
   display: inline;
   color: lightgray;
