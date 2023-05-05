@@ -37,7 +37,7 @@
 
 /* Change the link color to #111 (black) on hover */
 .navbar a:hover {
-  background-color: #111;
+  background-color: #333;
 }
 
 .navbar .navbar-brand {
@@ -59,9 +59,31 @@ html {
 }
 
 .box {
-  background-color: #111;
+  background-color: #333;
 }
 
 .hero .navbar {
   background: #111;
+}
+
+.hero .navbar-menu {
+  background: #111;
+}
+
+.hero .navbar-end {
+  background: inherit;
+}
+
+.input::placeholder {
+  color: lightgray;
+}
+
+.input,
+.textarea {
+  background-color: #4a4a4a;
+  border-color: #4a4a4a;
+  color: lightgray;
+  box-shadow: inset 0 1px 2px rgba(10, 10, 10, 0.1);
+  max-width: 100%;
+  width: 100%;
 }
