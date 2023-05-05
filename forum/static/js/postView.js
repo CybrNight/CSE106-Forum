@@ -7,9 +7,36 @@ class PostView {
         this.postCount = document.getElementById("post-vote-count");
         this.replyBox = replyBox;
         this.replyBtn = document.getElementById("btn-post-reply");
+
+        this.upvote = $('#post-upvote');
+        this.downvote = $("#post-downvote");
     }
 
     async upvotePost() {
+        if (this.postVote("UP")) {
+            if (this.upvote.hasClass("upvote")) {
+                this.upvote.removeClass("upvote");
+            } else {
+                this.upvote.addClass("upvote");
+            }
+
+            this.downvote.removeClass("downvote");
+        }
+    }
+
+    async downvotePost() {
+        if (this.postVote("DOWN")) {
+            if (this.downvote.hasClass("downvote")) {
+                this.downvote.removeClass("downvote");
+            } else {
+                this.downvote.addClass("downvote");
+            }
+
+            this.downvote.removeClass("upvote");
+        }
+    }
+
+    async postVote(voteType) {
         const uuid = post.uuid;
         const uri = post.uri;
 
@@ -18,24 +45,19 @@ class PostView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "vote-type": "UP" })
+            body: JSON.stringify({ "vote-type": voteType })
         });
 
         if (response.ok) {
             const data = await response.json();
             this.postCount.innerText = data.votes;
 
-            if (!$("#post-upvote").hasClass("upvote")) {
-                $("#post-upvote").addClass("upvote");
-            } else {
-                $("#post-upvote").removeClass("upvote");
-            }
-
-            if ($("#post-downvote").hasClass("downvote")) {
-                $("#post-downvote").removeClass("downvote");
-            }
+            return true;
         }
+        return false;
     }
+
+
 
     updateReplyButton() {
         if (this.replyBox.value) {
@@ -45,65 +67,41 @@ class PostView {
         }
     }
 
-    async downvotePost() {
-        const uuid = post.uuid;
-        const uri = post.uri;
 
-        let response = await fetch(`/posts/${uuid}/${uri}/`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ "vote-type": "DOWN" })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            this.postCount.innerText = data.votes;
-
-            if (!$("#post-downvote").hasClass("downvote")) {
-                $("#post-downvote").addClass("downvote");
-            } else {
-                $("#post-downvote").removeClass("downvote");
-            }
-
-            if ($("#post-upvote").hasClass("upvote")) {
-                $("#post-upvote").removeClass("upvote");
-            }
-        }
-    }
 }
 
-async function upvoteReply(uuid, uri) {
-    let response = await fetch(`/posts/${uuid}/${uri}/reply`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ "uuid": uuid, "vote-type": "UP" })
-    });
 
-    if (response.ok) {
-        const data = await response.json();
-        console.log(data);
-        //this.postCount.innerText = data.votes;
+async function upvoteReply(uuid, uri) {
+    if (replyVote(uuid, uri, "UP")) {
+        const id = `reply-vote-count-${uuid}`;
+
+        document.getElementById(id).innerText = replyVotes
     }
 }
 
 async function downvoteReply(uuid, uri) {
+    if (replyVote(uuid, uri, "DOWN")) {
+
+    }
+}
+
+async function replyVote(uuid, uri, voteType) {
     let response = await fetch(`/posts/${uuid}/${uri}/reply`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ "uuid": uuid, "vote-type": "DOWN" })
+        body: JSON.stringify({ "uuid": uuid, "vote-type": voteType })
     });
 
     if (response.ok) {
         const data = await response.json();
-        console.log(data);
-        //this.postCount.innerText = data.votes;
+        const replyVotes = data['votes']
+        const id = `reply-vote-count-${uuid}`;
+
+        document.getElementById(id).innerText = replyVotes
     }
+    return true;
 }
 
 window.onload = function () {

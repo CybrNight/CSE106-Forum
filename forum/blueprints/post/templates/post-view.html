@@ -1,14 +1,8 @@
 {% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
 <script src="{{ url_for('static',filename='js/postView.js') }}"></script>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/base-new.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/post-view.css') }}"
-/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base-new.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/post-view.css') }}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 {% endblock %}
 <script>
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
@@ -19,31 +13,31 @@
     <h1 id="post-title">{{data.title}}</h1>
     <p id="post-content">{{data.content}}</p>
   </article>
-  <div class="post-metric">  
+  <div class="post-metric">
     {% if not current_user.is_authenticated %}
-      <button id="post-upvote" class="fa fa-thumbs-up" disabled=""></button>
-      <button id="post-downvote" class="fa fa-thumbs-down" disabled=""></button>
+    <button id="post-upvote" class="fa fa-thumbs-up" disabled=""></button>
+    <button id="post-downvote" class="fa fa-thumbs-down" disabled=""></button>
     {% else %}
-      <button id="post-upvote" class="fa fa-thumbs-up"></button>
-      <button id="post-downvote" class="fa fa-thumbs-down"></button>
+    <button id="post-upvote" class="fa fa-thumbs-up"></button>
+    <button id="post-downvote" class="fa fa-thumbs-down"></button>
     {% endif %}
-    <h3 class="post-votes">Votes:<span id="post-vote-count">{{data.votes}}</span></div>
+    <h3 class="post-votes">
+      Votes:<span id="post-vote-count">{{data.votes}}</span>
+    </h3>
+  </div>
   <main>
     <div class="post-replies-container">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% for
-      category, message in messages %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
       <div class="{{ category }}">{{ message }}</div>
       {% endfor %} {% endwith %}
-      <form
-        class="post-form"
-        method="post"
-        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_uri=data.uri)}}"
-      >
+      <form class="post-form" method="post"
+        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_uri=data.uri)}}">
         <br />
         <div class="field">
           <div class="control">
-            <h3>Post a reply</h1>
-            <textarea id="textarea-post-reply", name="reply-content" cols="120" rows="5"></textarea>
+            <h3>Post a reply</h3>
+            <textarea id="textarea-post-reply" , name="reply-content" cols="120" rows="5"></textarea>
           </div>
         </div>
         <button id="btn-post-reply" class="button is-block is-info is-large is-fullwidth">
@@ -52,14 +46,20 @@
       </form>
       <!--This reverse broke before. Keep checking this-->
       {% for reply in data.replies|reverse %}
-      <div class="reply-container" id="{{ reply.uuid }}">
-          <!--NEED TO ADD URL TO USER PROFILE-->
-          <h2 class="reply-author">{{reply.author}}</a></h2>
-          <div class="reply-metric">  
-            <h3 class="reply-votes">Votes:<span id="reply-vote-count">{{reply.votes}}</span>
-            <button onclick="upvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-up"></button>
-            <button onclick="downvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-down"></button>
-          </div>
+      <div class="reply-container" id="reply-{{ reply.uuid }}">
+        <!--NEED TO ADD URL TO USER PROFILE-->
+        <h2 class="reply-author">{{reply.author}}</h2>
+        <div class="reply-metric">
+          <h3 class="reply-votes">
+            Votes:<span id="reply-vote-count-{{reply.uuid}}">{{reply.votes}}</span>
+          </h3>
+          <button id="btn-upvote-{{ reply.uuid }}" onclick="upvoteReply('{{ reply.uuid }}', post.uri)"
+            class="fa fa-thumbs-up {{'upvote' if reply['voteType'] =='UP' }}"></button>
+          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)"
+            class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN' }}"></button>
+
+
+        </div>
         <p>{{reply.content}}</p>
       </div>
       {% endfor %}
