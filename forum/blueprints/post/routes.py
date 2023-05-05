@@ -222,7 +222,7 @@ def get_posts():
     return "Success!", 205
 
 
-@post_bp.route("/posts/submit", methods=["GET", 'POST'])
+@post_bp.route("/posts/submit/", methods=["GET", 'POST'])
 # @login_required
 def submit_post():
     '''
