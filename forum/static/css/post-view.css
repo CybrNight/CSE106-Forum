@@ -90,21 +90,21 @@ h6 {
   background-color: rgb(34, 34, 34);
 }
 
-.post-metric .fa {
-  display: inline;
-  color: black;
-  background-color: white;
-  font-size: 1.5em;
-  margin-left: 10%;
-  margin-right: -10%;
+.fa {
+  color: lightgray;
+  border: none;
+  background-color: inherit;
 }
 
-.post-metric .fa:hover:enabled {
+.fa:hover:enabled {
   cursor: pointer;
 }
 
-.post-metric .fa:hover:disabled {
-  cursor: not-allowed;
+.post-metric .fa {
+  display: inline;
+  font-size: 1.5em;
+  margin-left: 10%;
+  margin-right: -10%;
 }
 
 .post-metric .fa.upvote {
