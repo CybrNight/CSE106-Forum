@@ -12,30 +12,6 @@ class PostView {
         this.downvote = $("#post-downvote");
     }
 
-    async upvotePost() {
-        if (this.postVote("UP")) {
-            if (this.upvote.hasClass("upvote")) {
-                this.upvote.removeClass("upvote");
-            } else {
-                this.upvote.addClass("upvote");
-            }
-
-            this.downvote.removeClass("downvote");
-        }
-    }
-
-    async downvotePost() {
-        if (this.postVote("DOWN")) {
-            if (this.downvote.hasClass("downvote")) {
-                this.downvote.removeClass("downvote");
-            } else {
-                this.downvote.addClass("downvote");
-            }
-
-            this.downvote.removeClass("upvote");
-        }
-    }
-
     async postVote(voteType) {
         const uuid = post.uuid;
         const uri = post.uri;
@@ -51,6 +27,25 @@ class PostView {
         if (response.ok) {
             const data = await response.json();
             this.voteCount.innerText = data.votes;
+
+            const up = voteType == "UP"
+            const down = voteType == "DOWN"
+
+            if (up) {
+                if (this.upvote.hasClass("upvote")) {
+                    this.upvote.removeClass("upvote");
+                } else {
+                    this.upvote.addClass("upvote");
+                }
+                this.downvote.removeClass("downvote");
+            } else if (down) {
+                if (this.downvote.hasClass("downvote")) {
+                    this.downvote.removeClass("downvote");
+                } else {
+                    this.downvote.addClass("downvote");
+                }
+                this.upvote.removeClass("upvote");
+            }
 
             return true;
         }
@@ -97,7 +92,7 @@ async function downvoteReply(uuid, uri) {
             downvote.addClass("downvote");
         }
 
-        downvote.removeClass("upvote");
+        upvote.removeClass("upvote");
     }
 }
 
@@ -136,11 +131,11 @@ window.onload = function () {
     }
 
     btnUpvote.addEventListener('mouseup', button => {
-        postView.upvotePost();
+        postView.postVote("UP");
     });
 
     btnDownvote.addEventListener('mouseup', button => {
-        postView.downvotePost();
+        postView.postVote("DOWN");
     }, true);
 
     postView.updateReplyButton()
