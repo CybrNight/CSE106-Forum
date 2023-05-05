@@ -74,6 +74,38 @@ class PostView {
     }
 }
 
+async function upvoteReply(uuid, uri) {
+    let response = await fetch(`/posts/${uuid}/${uri}/reply`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "uuid": uuid, "vote-type": "UP" })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        //this.postCount.innerText = data.votes;
+    }
+}
+
+async function downvoteReply(uuid, uri) {
+    let response = await fetch(`/posts/${uuid}/${uri}/reply`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "uuid": uuid, "vote-type": "DOWN" })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        //this.postCount.innerText = data.votes;
+    }
+}
+
 window.onload = function () {
     const replyBox = document.getElementById("textarea-post-reply");
 

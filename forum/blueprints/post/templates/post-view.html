@@ -58,7 +58,7 @@
           <div class="reply-metric">  
             <h3 class="reply-votes">Votes:<span id="reply-vote-count">{{reply.votes}}</span>
             <button onclick="upvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-up"></button>
-            <button class="fa fa-thumbs-down"></button>
+            <button onclick="downvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-down"></button>
           </div>
         <p>{{reply.content}}</p>
       </div>
