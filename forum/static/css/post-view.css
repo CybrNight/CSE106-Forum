@@ -107,11 +107,11 @@ h6 {
   margin-right: -10%;
 }
 
-.post-metric .fa.upvote {
+.fa.upvote {
   color: orange;
 }
 
-.post-metric .fa.downvote {
+.fa.downvote {
   color: cornflowerblue;
 }
 
@@ -194,6 +194,12 @@ main {
   size: 10in;
   color: rgb(238, 95, 95);
 }
-.reply-container .reply-votes span {
+
+.reply-container h2 {
+  size: 10in;
+  color: rgb(238, 95, 95);
+}
+
+.reply-container span {
   color: orange;
 }
