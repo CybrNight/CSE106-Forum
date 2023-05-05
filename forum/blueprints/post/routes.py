@@ -7,7 +7,7 @@ from flask import jsonify
 from forum.models import Reply, PostReply, Post, PostVote, User, VoteType, TagType, Tag
 from forum import db
 from random import choice
-import json
+import bleach
 
 # Creates a new flask blueprint for this file
 post_bp = Blueprint('post_bp', __name__,
@@ -26,11 +26,11 @@ def testpost():
     # Redirect user to testpost
     return redirect(url_for("post_bp.get_post",
                             p_uuid="testpost",
-                            p_title="testpost"))
+                            p_uri="testpost"))
 
 
-@post_bp.route("/posts/<p_uuid>/<p_title>/", methods=['GET', 'PUT'])
-def get_post(p_uuid, p_title):
+@post_bp.route("/posts/<p_uuid>/<p_uri>/", methods=['GET', 'PUT'])
+def get_post(p_uuid, p_uri):
     '''
     Defines Flask route to retrieve specific post
 
@@ -38,23 +38,23 @@ def get_post(p_uuid, p_title):
     '''
 
     if request.method == 'GET':
-        if p_title == "testpost":
+        if p_uri == "testpost":
             # If testpost is being loaded, then load the first Post in db
-            v_up = Post.query.all()[0]
+            post = Post.query.all()[0]
         else:
             # Query post with UUID
-            v_up = Post.query.filter_by(uuid=p_uuid).first()
+            post = Post.query.filter_by(uuid=p_uuid, uri=p_uri).first()
 
         # If we found the post then retrieve its data
-        if v_up:
+        if post:
             user_vote = VoteType.DEFAULT
             replies = []
             # Get each PostReply entry from the post
-            for p_vote in v_up.post_votes:
+            for p_vote in post.post_votes:
                 if p_vote.user == current_user:
                     user_vote = p_vote.vote
 
-            for p_reply in v_up.post_replies:
+            for p_reply in post.post_replies:
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
 
@@ -65,12 +65,13 @@ def get_post(p_uuid, p_title):
                      "votes": reply.total_votes})
 
             # For the queried post, store its metadata and replies data in JSON
-            post_data = {"uuid": v_up.uuid,
-                         "title": v_up.title,
-                         "content": v_up.content,
-                         "votes": v_up.total_votes,
+            post_data = {"title": post.title,
+                         "uri": post.uri,
+                         "uuid": post.uuid,
+                         "content": post.content,
+                         "votes": post.total_votes,
                          "userVote": user_vote.value,
-                         "tags": v_up.tag_list,
+                         "tags": post.tag_list,
                          "replies": replies}
 
             # Return post-view template with post_data filled in
@@ -137,8 +138,8 @@ def get_post(p_uuid, p_title):
     return "Post does not exist", 404
 
 
-@post_bp.route("/posts/<p_uuid>/<p_title>/reply/", methods=['POST'])
-def add_post_reply(p_uuid, p_title):
+@post_bp.route("/posts/<p_uuid>/<p_uri>/reply/", methods=['POST'])
+def add_post_reply(p_uuid, p_uri):
     '''
     Defines Flask route to add a reply to a Post
 
@@ -156,10 +157,10 @@ def add_post_reply(p_uuid, p_title):
         flash(message, 'error')
         return redirect(url_for("post_bp.get_post",
                                 p_uuid=p_uuid,
-                                p_title=p_title))
+                                p_uri=p_uri))
 
     # Get the reply content from the form
-    content = request.form.get('reply-content')
+    content = bleach.clean(request.form.get('reply-content'))
     post = Post.query.filter_by(uuid=p_uuid).first()
 
     # Create new Reply object, and add new PostReply to the database
@@ -171,7 +172,7 @@ def add_post_reply(p_uuid, p_title):
     # Reload the page to show new reply
     return redirect(url_for("post_bp.get_post",
                             p_uuid=p_uuid,
-                            p_title=p_title))
+                            p_uri=p_uri))
 
 
 @post_bp.route('/posts/', methods=['GET'])
@@ -217,6 +218,7 @@ def get_posts():
             if (filter["filter"] == "All" or filter["filter"] in tags):
                 posts_data.append({"uuid": post.uuid,
                                    "title": post.title,
+                                   "uri": post.uri,
                                    "votes": post.total_votes,
                                    "author": post.user.name,
                                    "date": post.date,
@@ -236,8 +238,11 @@ def submit_post():
     '''
     if request.method == 'POST':
         # Get the reply content from the form
-        title = request.form.get("post-title")
-        content = request.form.get('post-content')
+        title = bleach.clean(request.form.get("post-title"), strip=True)
+        content = bleach.clean(request.form.get('post-content'), strip=True)
+
+        if len(title) == 0 or len(content) == 0:
+            return "Post content and title cannot be empty", 409
 
         # Create new Reply object, and add new PostReply to the database
         post = Post(title=title, content=content)
@@ -251,6 +256,6 @@ def submit_post():
         # Reload the page to show new reply
         return redirect(url_for("post_bp.get_post",
                                 p_uuid=post.uuid,
-                                p_title=post.title))
+                                p_uri=post.uri))
     elif request.method == 'GET':
         return render_template("post-create.html")

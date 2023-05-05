@@ -1,19 +1,18 @@
 
 class PostView {
 
-    constructor(postTitle, postContent, btnUpvote, btnDownvote) {
-        this.postTitle = postTitle;
-        this.postContent = postContent;
+    constructor(btnUpvote, btnDownvote, replyBox) {
         this.btnUpvote = btnUpvote;
         this.btnDownvote = btnDownvote;
         this.postCount = document.getElementById("post-vote-count");
+        this.replyBox = replyBox;
     }
 
     async upvotePost() {
         const uuid = post.uuid;
-        const title = post.title;
+        const uri = post.uri;
 
-        let response = await fetch(`/posts/${uuid}/${title}/`, {
+        let response = await fetch(`/posts/${uuid}/${uri}/`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -37,11 +36,19 @@ class PostView {
         }
     }
 
+    updateReplyButton() {
+        if (this.replyBox.value) {
+            $("#btn-post-reply").disabled = false
+        } else {
+            $("#btn-post-reply").disabled = true
+        }
+    }
+
     async downvotePost() {
         const uuid = post.uuid;
-        const title = post.title;
+        const uri = post.uri;
 
-        let response = await fetch(`/posts/${uuid}/${title}/`, {
+        let response = await fetch(`/posts/${uuid}/${uri}/`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -67,13 +74,12 @@ class PostView {
 }
 
 window.onload = function () {
-    const postTitle = document.getElementById("post-title");
-    const postContent = document.getElementById("post-content")
+    const replyBox = document.getElementById("textarea-post-reply");
 
-    const btnUpvote = document.getElementById("post-upvote")
-    const btnDownvote = document.getElementById("post-downvote")
+    const btnUpvote = document.getElementById("post-upvote");
+    const btnDownvote = document.getElementById("post-downvote");
 
-    c = new PostView(postTitle, postContent, btnUpvote, btnDownvote);
+    postView = new PostView(btnUpvote, btnDownvote, replyBox);
 
     console.log(post.userVote)
     if (post.userVote === "DOWN") {
@@ -83,10 +89,14 @@ window.onload = function () {
     }
 
     btnUpvote.addEventListener('mouseup', button => {
-        c.upvotePost();
-    })
+        postView.upvotePost();
+    });
 
     btnDownvote.addEventListener('mouseup', button => {
-        c.downvotePost();
-    })
+        postView.downvotePost();
+    });
+
+    $("#btn-post-reply").disabled = true
+    replyBox.oninput = postView.updateReplyButton();
+    replyBox.onchange = postView.updateReplyButton();
 }

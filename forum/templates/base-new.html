@@ -26,28 +26,15 @@
               <div class="navbar-end">
                 {% if current_user.is_authenticated and current_user.is_admin()
                 %}
-                <a href="/admin" class="navbar-item"> Admin </a>
+                <a href="/admin"> Admin </a>
                 {% endif %} {% if not current_user.is_authenticated %}
-                <a href="{{ url_for('auth_bp.login') }}" class="navbar-item">
-                  Login
-                </a>
-                <a href="{{ url_for('auth_bp.signup') }}" class="navbar-item">
-                  Sign Up
-                </a>
+                <a href="{{ url_for('auth_bp.login') }}"> Login </a>
+                <a href="{{ url_for('auth_bp.signup') }}"> Sign Up </a>
                 {% endif %} {% if current_user.is_authenticated %}
-                <a href="{{ url_for('auth_bp.logout') }}" class="navbar-item">
-                  Logout
-                </a>
+                <a href="{{ url_for('auth_bp.logout') }}"> Logout </a>
                 {% endif %} {% if current_user.is_authenticated %}
-                <a
-                  href="{{ url_for('post_bp.all_posts') }}"
-                  class="navbar-item"
-                >
-                  Posts
-                </a>
-                <a href="{{ url_for('main_bp.index') }}" class="navbar-item">
-                  Home
-                </a>
+                <a href="{{ url_for('post_bp.all_posts') }}"> Posts </a>
+                <a href="{{ url_for('main_bp.index') }}"> Home </a>
                 {% endif %}
               </div>
             </div>
