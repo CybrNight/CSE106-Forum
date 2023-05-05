@@ -4,7 +4,8 @@ from flask_login import current_user, login_required
 from markupsafe import Markup
 from flask import jsonify
 
-from forum.models import Reply, PostReply, Post, PostVote, User, VoteType, TagType, Tag
+from forum.models import (Reply, PostReply, Post,
+                          PostVote, VoteType, TagType, Tag, ReplyVote)
 from forum import db
 from random import choice
 import bleach
@@ -60,7 +61,8 @@ def get_post(p_uuid, p_uri):
 
                 # Store each Reply object data as JSON
                 replies.append(
-                    {"author": user.name,
+                    {"uuid": reply.uuid,
+                     "author": user.name,
                      "content": reply.content,
                      "votes": reply.total_votes})
 
@@ -78,28 +80,25 @@ def get_post(p_uuid, p_uri):
             return render_template("post-view.html", data=post_data)
 
     elif request.method == 'PUT':
-        post = Post.query.filter_by(uuid=p_uuid).first()
+        post = Post.query.filter_by(uuid=p_uuid, uri=p_uri).first()
 
         if not current_user.is_authenticated:
             return {"votes": post.total_votes}, 403
 
-        data = request.json
-
         if post:
+            data = request.json
             # Get the incoming VoteType
             v_type = VoteType(data["vote-type"])
 
             # Query all upvotes for Post
-            v_up = PostVote.query.join(
-                User).filter((User.uuid == current_user.uuid) &
-                             (PostVote.vote == VoteType.UP) &
-                             (Post.uuid == p_uuid)).all()
+            v_up = PostVote.query.filter((PostVote.user == current_user) &
+                                         (PostVote.vote == VoteType.UP) &
+                                         (PostVote.post == post)).all()
 
             # Query all downvotes for Post
-            v_down = PostVote.query.join(
-                User).filter((User.uuid == current_user.uuid) &
-                             (PostVote.vote == VoteType.DOWN) &
-                             (Post.uuid == p_uuid)).all()
+            v_down = PostVote.query.filter((PostVote.user == current_user) &
+                                           (PostVote.vote == VoteType.DOWN) &
+                                           (PostVote.post == post)).all()
 
             # If user is trying to upvote post
             if v_type == VoteType.UP:
@@ -176,6 +175,70 @@ def add_post_reply(p_uuid, p_uri):
     return redirect(url_for("post_bp.get_post",
                             p_uuid=p_uuid,
                             p_uri=p_uri))
+
+
+@post_bp.route("/posts/<p_uuid>/<p_uri>/reply/", methods=['PUT'])
+def handle_reply_vote(p_uuid, p_uri):
+    '''
+    Defines Flask route vote on a reply
+
+    Methods: PUT
+    '''
+    data = request.json
+    print(data['uuid'])
+    reply = Reply.query.filter_by(uuid=data['uuid']).first()
+
+    if not current_user.is_authenticated:
+        return {"votes": reply.total_votes}, 403
+
+    if reply:
+        # Get the incoming VoteType
+        v_type = VoteType(data["vote-type"])
+
+        # Query all upvotes for Reply
+        v_up = ReplyVote.query.filter((ReplyVote.user == current_user) &
+                                      (ReplyVote.vote == VoteType.UP) &
+                                      (ReplyVote.reply == reply)).all()
+
+        # Query all downvotes for Reply
+        v_down = ReplyVote.query.filter((ReplyVote.user == current_user) &
+                                        (ReplyVote.vote == VoteType.DOWN) &
+                                        (ReplyVote.reply == reply)).all()
+
+        # If user is trying to upvote post
+        if v_type == VoteType.UP:
+            # Check if the user has downvoted the post, and remove the downvote
+            if len(v_down) > 0:
+                for v in v_down:
+                    db.session.delete(v)
+                db.session.commit()
+
+            # If user has not upvoted the post, then add their vote
+            if len(v_up) == 0:
+                db.session.add(ReplyVote(reply=reply,
+                                         user=current_user, vote=VoteType.UP))
+            else:  # If the user has already upvoted then remove their upvote
+                for v in v_up:
+                    db.session.delete(v)
+            db.session.commit()
+        elif v_type == VoteType.DOWN:
+            # Check if the user has downvoted the post, and remove the downvote
+            if len(v_up) > 0:
+                for v in v_up:
+                    db.session.delete(v)
+                db.session.commit()
+
+            if len(v_down) == 0:
+                db.session.add(PostVote(post=reply,
+                                        user=current_user, vote=VoteType.DOWN))
+            else:  # If user has already downvoted, then remove their downvote
+                for v in v_down:
+                    db.session.delete(v)
+
+        # Commit all changes made and return new vote count to front-end
+        db.session.commit()
+        return {"votes": reply.total_votes}
+    return "Not found", 404
 
 
 @post_bp.route('/getPosts/', methods=['PUT'])
