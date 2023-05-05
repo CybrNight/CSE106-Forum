@@ -52,15 +52,15 @@ class CourseApp {
 }
 window.onload = function () {
     const postTable = document.getElementById('posts-table');
-    const applyFilter = document.getElementById("applyFilt");
+    const dropdown = document.getElementById("tagFilter");
 
-    c = new CourseApp(postTable, applyFilter);
+    c = new CourseApp(postTable, dropdown);
 
     c.getPostTable().catch(error => {
         console.log(error);
     });
 
-    applyFilter.addEventListener('click', button => {
+    dropdown.addEventListener('change', button => {
         c.getPostTable();
     });
 }
