@@ -179,27 +179,6 @@ def add_post_reply(p_uuid, p_uri):
                             p_uri=p_uri))
 
 
-@post_bp.route('/posts/', methods=['GET'])
-def all_posts():
-    '''
-    Defines Flask route to bring user to posts page
-
-    Methods: GET
-    '''
-
-    # Take admin user to the admin page, admin has no courses
-    if current_user.is_authenticated and current_user.is_admin():
-        return redirect("/admin")
-    # Take user to the teacher or student view based on role
-    # if current_user.role == Role.PROFESSOR:
-    #    return render_template('teacher.html')
-    # elif current_user.role == Role.DEFAULT:
-    #    return render_template('courses.html')
-
-    # Return all-posts template if user passes checks
-    return render_template('all-posts.html')
-
-
 @post_bp.route('/getPosts/', methods=['PUT'])
 def get_posts():
     '''
