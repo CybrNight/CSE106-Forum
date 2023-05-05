@@ -6,6 +6,7 @@ class PostView {
         this.btnDownvote = btnDownvote;
         this.postCount = document.getElementById("post-vote-count");
         this.replyBox = replyBox;
+        this.replyBtn = document.getElementById("btn-post-reply");
     }
 
     async upvotePost() {
@@ -38,9 +39,9 @@ class PostView {
 
     updateReplyButton() {
         if (this.replyBox.value) {
-            $("#btn-post-reply").disabled = false
+            this.replyBtn.disabled = false
         } else {
-            $("#btn-post-reply").disabled = true
+            this.replyBtn.disabled = true
         }
     }
 
@@ -94,9 +95,8 @@ window.onload = function () {
 
     btnDownvote.addEventListener('mouseup', button => {
         postView.downvotePost();
-    });
+    }, true);
 
-    $("#btn-post-reply").disabled = true
-    replyBox.oninput = postView.updateReplyButton();
-    replyBox.onchange = postView.updateReplyButton();
+    postView.updateReplyButton()
+    replyBox.addEventListener('input', event => postView.updateReplyButton());
 }
