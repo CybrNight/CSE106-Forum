@@ -160,7 +160,9 @@ def add_post_reply(p_uuid, p_uri):
     # If the user is not authenticated, flash them a warning message
     if not current_user.is_authenticated:
         # Create warning message
-        message = Markup('<h1><a href="/login">Login</a> or'
+        url = url_for("auth_bp.login", next=url_for(
+            "post_bp.get_post", p_uuid=p_uuid, p_uri=p_uri))
+        message = Markup(f'<h1><a href="{url}">Login</a> or'
                          '<a href="/signup">Create Account</a> to post '
                          'reply</h1>')
 

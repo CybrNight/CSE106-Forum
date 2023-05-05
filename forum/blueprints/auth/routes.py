@@ -16,9 +16,9 @@ def redirect_dest(fallback):
     dest = request.args.get('next')
     try:
         dest_url = url_for(dest)
-    except:
-        return redirect(fallback)
-    return redirect(dest_url)
+        return redirect(dest_url)
+    except Exception as e:
+        return redirect(dest)
 
 
 @auth_bp.route('/login/', methods=['GET', 'POST'])
