@@ -214,20 +214,20 @@ def get_posts():
             for tag in post.tags:
                 tags.append(tag.type.value)
 
-            if(filter["filter"] == "All" or filter["filter"] in tags):
+            if (filter["filter"] == "All" or filter["filter"] in tags):
                 posts_data.append({"uuid": post.uuid,
-                                "title": post.title,
-                                "votes": post.total_votes,
-                                "author": post.user.name,
-                                "date": post.date,
-                                "tags": tags})
+                                   "title": post.title,
+                                   "votes": post.total_votes,
+                                   "author": post.user.name,
+                                   "date": post.date,
+                                   "tags": tags})
         return jsonify(posts_data)
 
     return "Success!", 205
 
 
 @post_bp.route("/posts/submit/", methods=["GET", 'POST'])
-# @login_required
+@login_required
 def submit_post():
     '''
     Defines Flask route to create a Post
