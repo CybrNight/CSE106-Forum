@@ -21,8 +21,13 @@
     <p id="post-content">{{data.content}}</p>
   </article>
   <div class="post-metric">  
-    <button id="post-upvote" class="fa fa-thumbs-up"></button>
-    <button id="post-downvote" class="fa fa-thumbs-down"></button>
+    {% if not current_user.is_authenticated %}
+      <button id="post-upvote" class="fa fa-thumbs-up" disabled=""></button>
+      <button id="post-downvote" class="fa fa-thumbs-down" disabled=""></button>
+    {% else %}
+      <button id="post-upvote" class="fa fa-thumbs-up"></button>
+      <button id="post-downvote" class="fa fa-thumbs-down"></button>
+    {% endif %}
     <h3 class="post-votes">Votes:<span id="post-vote-count">{{data.votes}}</span></div>
   <main>
     <div class="post-replies-container">
@@ -33,16 +38,16 @@
       <form
         class="post-form"
         method="post"
-        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
+        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_uri=data.uri)}}"
       >
         <br />
         <div class="field">
           <div class="control">
             <h3>Post a reply</h1>
-            <textarea name="reply-content" cols="120" rows="5"></textarea>
+            <textarea id="textarea-post-reply", name="reply-content" cols="120" rows="5"></textarea>
           </div>
         </div>
-        <button class="button is-block is-info is-large is-fullwidth">
+        <button id="btn-post-reply" class="button is-block is-info is-large is-fullwidth">
           Add Reply
         </button>
       </form>

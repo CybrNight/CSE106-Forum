@@ -49,6 +49,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.VARCHAR(255), unique=True, nullable=False)
     title = db.Column(db.String, unique=False)
+    uri = db.Column(db.String, unique=False)
     author_id = db.Column(db.VARCHAR(255), db.ForeignKey(
         "user.uuid"), nullable=False)
     content = db.Column(db.VARCHAR)
@@ -69,7 +70,7 @@ class Post(db.Model):
                                  lazy="joined",
                                  cascade='all, delete-orphan')
 
-    def __init__(self, title, content=""):
+    def __init__(self, title="NOTHING", content="NOTHING"):
         self.title = title
         self.content = content
         self.date = datetime.now().date().strftime("%d %b %Y")
@@ -77,6 +78,7 @@ class Post(db.Model):
         self.downvotes = 0
 
         self.uuid = gen_model_uuid(Post, 8)
+        self.uri = self.title.replace(" ", "_").lower()
         db.session.commit()
 
     @property

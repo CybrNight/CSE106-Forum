@@ -12,7 +12,7 @@ class CourseApp {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({"filter": selectedFilter})
+            body: JSON.stringify({ "filter": selectedFilter })
         });
         if (response.ok) {
             //Get json payload
@@ -39,11 +39,11 @@ class CourseApp {
                 var postTagCell = row.insertCell();
 
                 //Set cell values to the course information
-                postTitleCell.innerHTML = `<a href="/posts/${post.uuid}/${post.title}/">${post.title}</a>`;
+                postTitleCell.innerHTML = `<a href="/posts/${post.uuid}/${post.uri}/">${post.title}</a>`;
                 postAuthorCell.innerText = post.author;
                 postDateCell.innerText = post.date;
                 postUpvotesCell.innerText = post.votes;
-                postTagCell.innerText = post.tags; 
+                postTagCell.innerText = post.tags;
             });
         } else {
             throw new InternalError(`${response.status}:${await response.text()}`);

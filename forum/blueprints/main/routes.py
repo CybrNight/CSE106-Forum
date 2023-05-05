@@ -56,6 +56,8 @@ def profile():
     # For every post in query, add to JSON to send to template
     for p in post:
         posts.append({"title": p.title,
+                      "uri": p.uri,
+                      "uuid": p.uuid,
                       "content": p.content,
                       "upvotes": p.upvotes,
                       "downvotes": p.downvotes})
