@@ -1,7 +1,8 @@
 from datetime import datetime
 from forum import db
 from forum.util.hash import gen_model_uuid
-from forum.models.enums import TagType, VoteType
+from .enums import TagType, VoteType
+from .user import User
 
 
 class ReplyVote(db.Model):
