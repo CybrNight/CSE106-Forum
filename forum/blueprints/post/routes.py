@@ -81,7 +81,7 @@ def get_post(p_uuid, p_uri):
         post = Post.query.filter_by(uuid=p_uuid).first()
 
         if not current_user.is_authenticated:
-            return {"votes": post.total_votes}
+            return {"votes": post.total_votes}, 403
 
         data = request.json
 
@@ -161,6 +161,10 @@ def add_post_reply(p_uuid, p_uri):
 
     # Get the reply content from the form
     content = bleach.clean(request.form.get('reply-content'))
+
+    if len(content) == 0:
+        return "Reply content empty", 409
+
     post = Post.query.filter_by(uuid=p_uuid).first()
 
     # Create new Reply object, and add new PostReply to the database
