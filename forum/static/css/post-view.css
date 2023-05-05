@@ -90,28 +90,28 @@ h6 {
   background-color: rgb(34, 34, 34);
 }
 
+.fa {
+  color: lightgray;
+  border: none;
+  background-color: inherit;
+}
+
+.fa:hover:enabled {
+  cursor: pointer;
+}
+
 .post-metric .fa {
   display: inline;
-  color: black;
-  background-color: white;
   font-size: 1.5em;
   margin-left: 10%;
   margin-right: -10%;
 }
 
-.post-metric .fa:hover:enabled {
-  cursor: pointer;
-}
-
-.post-metric .fa:hover:disabled {
-  cursor: not-allowed;
-}
-
-.post-metric .fa.upvote {
+.fa.upvote {
   color: orange;
 }
 
-.post-metric .fa.downvote {
+.fa.downvote {
   color: cornflowerblue;
 }
 
@@ -194,6 +194,12 @@ main {
   size: 10in;
   color: rgb(238, 95, 95);
 }
-.reply-container .reply-votes span {
+
+.reply-container h2 {
+  size: 10in;
+  color: rgb(238, 95, 95);
+}
+
+.reply-container span {
   color: orange;
 }

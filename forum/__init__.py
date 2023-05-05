@@ -46,7 +46,7 @@ def create_app():
     @login_manager.unauthorized_handler
     def handle_needs_login():
         flash("You have to be logged in to access this page.")
-        return redirect(url_for('auth_bp.login', next=request.endpoint))
+        return redirect(url_for('auth_bp.login', next=request.path))
 
     # Import and register blueprints
     from .blueprints import auth_bp, main_bp, post_bp
