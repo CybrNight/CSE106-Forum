@@ -4,7 +4,7 @@ class PostView {
     constructor(btnUpvote, btnDownvote, replyBox) {
         this.btnUpvote = btnUpvote;
         this.btnDownvote = btnDownvote;
-        this.postCount = document.getElementById("post-vote-count");
+        this.voteCount = document.getElementById("post-vote-count");
         this.replyBox = replyBox;
         this.replyBtn = document.getElementById("btn-post-reply");
 
@@ -50,7 +50,7 @@ class PostView {
 
         if (response.ok) {
             const data = await response.json();
-            this.postCount.innerText = data.votes;
+            this.voteCount.innerText = data.votes;
 
             return true;
         }
@@ -72,16 +72,32 @@ class PostView {
 
 
 async function upvoteReply(uuid, uri) {
-    if (replyVote(uuid, uri, "UP")) {
-        const id = `reply-vote-count-${uuid}`;
+    const upvote = $(`#btn-upvote-${uuid}`);
+    const downvote = $(`#btn-downvote-${uuid}`);
 
-        document.getElementById(id).innerText = replyVotes
+    if (replyVote(uuid, uri, "UP")) {
+        if (upvote.hasClass("upvote")) {
+            upvote.removeClass("upvote");
+        } else {
+            upvote.addClass("upvote");
+        }
+
+        downvote.removeClass("downvote");
     }
 }
 
 async function downvoteReply(uuid, uri) {
-    if (replyVote(uuid, uri, "DOWN")) {
+    const upvote = $(`#btn-upvote-${uuid}`);
+    const downvote = $(`#btn-downvote-${uuid}`);
 
+    if (replyVote(uuid, uri, "DOWN")) {
+        if (downvote.hasClass("downvote")) {
+            downvote.removeClass("downvote");
+        } else {
+            downvote.addClass("downvote");
+        }
+
+        downvote.removeClass("upvote");
     }
 }
 
@@ -100,8 +116,9 @@ async function replyVote(uuid, uri, voteType) {
         const id = `reply-vote-count-${uuid}`;
 
         document.getElementById(id).innerText = replyVotes
+        return true;
     }
-    return true;
+    return false;
 }
 
 window.onload = function () {
@@ -112,10 +129,9 @@ window.onload = function () {
 
     postView = new PostView(btnUpvote, btnDownvote, replyBox);
 
-    console.log(post.userVote)
-    if (post.userVote === "DOWN") {
+    if (post.voteType === "DOWN") {
         $("#post-downvote").addClass("downvote");
-    } else if (post.userVote === "UP") {
+    } else if (post.voteType === "UP") {
         $("#post-upvote").addClass("upvote");
     }
 
