@@ -1,5 +1,5 @@
 from forum.models import Post
-from flask import Blueprint, redirect, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 import git
 
@@ -44,7 +44,7 @@ def index():
 @ main_bp.app_errorhandler(404)
 def page_not_found(e):
     print(e)
-    return render_template('error/404.html'), 404
+    return redirect(url_for("main_bp.index"))
 
 
 # 403 errors

@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import Blueprint, abort, redirect, render_template, request, url_for
 from flask import flash, escape
 from flask_login import current_user, login_required
 from markupsafe import Markup
@@ -134,8 +134,7 @@ def get_post(p_uuid, p_uri):
             # Commit all changes made and return new vote count to front-end
             db.session.commit()
             return {"votes": post.total_votes}
-    # If post not found, then 404
-    return "Post does not exist", 404
+    abort(404)
 
 
 @post_bp.route("/posts/<p_uuid>/<p_uri>/reply/", methods=['POST'])
