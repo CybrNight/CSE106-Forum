@@ -8,20 +8,19 @@
   rel="stylesheet"
   href="{{ url_for('static', filename='css/all-posts.css') }}"
 />
-{% endblock %}
+{% endblock %} {% if current_user.is_authenticated %}
 <h1 class="title">Welcome, {{ current_user.name }}!</h1>
+{% else %}
+<h1 class="title">Welcome, to xQc Questions!</h1>
+{% endif %}
 <hr class="rounded" />
 <div class="tab">
-  <button
-    class="tablinks"
-    onclick="posts(event, 'AllPosts')"
-    id="defaultOpen"
-  >
+  <button class="tablinks" onclick="posts(event, 'AllPosts')" id="defaultOpen">
     Forum Posts
   </button>
-  <select id = "tagFilter">
+  <select id="tagFilter">
     <option value="All">All Posters</option>
-    <option value="Programming">Programming </option>
+    <option value="Programming">Programming</option>
     <option value="Science">Science</option>
     <option value="History">History</option>
     <option value="Math">Math</option>
@@ -33,11 +32,11 @@
     <table id="posts-table">
       <thead>
         <tr>
-          <th class = "titleName">Title</th>
-          <th class = "author">Author</th>
-          <th class = "time">Post Date</th>
-          <th class = "upvotes">Upvotes</th>
-          <th class = "postTag">Tags</th>
+          <th class="titleName">Title</th>
+          <th class="author">Author</th>
+          <th class="time">Post Date</th>
+          <th class="upvotes">Upvotes</th>
+          <th class="postTag">Tags</th>
         </tr>
       </thead>
     </table>
