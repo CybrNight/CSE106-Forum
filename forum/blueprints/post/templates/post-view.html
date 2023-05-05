@@ -48,10 +48,14 @@
       </form>
       <!--This reverse broke before. Keep checking this-->
       {% for reply in data.replies|reverse %}
-      <div class="reply-container">
-        <!--NEED TO ADD URL TO USER PROFILE-->
-        <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
-        <h4 class="reply-votes">Votes: <span>{{reply.votes}}</span></h4>
+      <div class="reply-container" id="{{ reply.uuid }}">
+          <!--NEED TO ADD URL TO USER PROFILE-->
+          <h2 class="reply-author">{{reply.author}}</a></h2>
+          <div class="reply-metric">  
+          <button id="reply-upvote" class="fa fa-thumbs-up"></button>
+          <button id="reply-downvote" class="fa fa-thumbs-down"></button>
+          <h3 class="reply-votes">Votes:<span id="reply-vote-count">{{reply.votes}}</span>
+        </div>
         <p>{{reply.content}}</p>
       </div>
       {% endfor %}
