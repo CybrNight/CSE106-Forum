@@ -229,8 +229,8 @@ def handle_reply_vote(p_uuid, p_uri):
                 db.session.commit()
 
             if len(v_down) == 0:
-                db.session.add(PostVote(post=reply,
-                                        user=current_user, vote=VoteType.DOWN))
+                db.session.add(ReplyVote(reply=reply,
+                                         user=current_user, vote=VoteType.DOWN))
             else:  # If user has already downvoted, then remove their downvote
                 for v in v_down:
                     db.session.delete(v)
