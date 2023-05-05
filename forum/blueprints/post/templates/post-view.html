@@ -14,9 +14,10 @@
     <p id="post-content">{{data.content}}</p>
   </article>
   <div class="post-metric">
+    {% set url = url_for('auth_bp.login', next=request.path) %}
     {% if not current_user.is_authenticated %}
-    <button id="post-upvote" class="fa fa-thumbs-up" disabled=""></button>
-    <button id="post-downvote" class="fa fa-thumbs-down" disabled=""></button>
+    <a href="{{ url }}" id="post-upvote" class="fa fa-thumbs-up"></a>
+    <a href="{{ url }}" id="post-downvote" class="fa fa-thumbs-down"></a>
     {% else %}
     <button id="post-upvote" class="fa fa-thumbs-up"></button>
     <button id="post-downvote" class="fa fa-thumbs-down"></button>
@@ -57,8 +58,6 @@
             class="fa fa-thumbs-up {{'upvote' if reply['voteType'] =='UP' }}"></button>
           <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)"
             class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN' }}"></button>
-
-
         </div>
         <p>{{reply.content}}</p>
       </div>

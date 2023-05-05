@@ -78,6 +78,10 @@ h6 {
   margin-left: 10%;
 }
 
+a{
+  text-decoration: none;
+}
+
 .post-container article p {
   text-align: justify;
   margin-left: 10%;
@@ -88,6 +92,10 @@ h6 {
   border: 0.25em solid rgb(75, 75, 75);
   color: lightgray;
   background-color: rgb(34, 34, 34);
+}
+
+a:hover{
+  cursor: pointer;
 }
 
 .fa {
