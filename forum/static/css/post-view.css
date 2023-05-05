@@ -99,6 +99,14 @@ h6 {
   margin-right: -10%;
 }
 
+.post-metric .fa:hover:enabled {
+  cursor: pointer;
+}
+
+.post-metric .fa:hover:disabled {
+  cursor: not-allowed;
+}
+
 .post-metric .fa.upvote {
   color: orange;
 }
@@ -156,7 +164,7 @@ main {
   padding: 1%;
 }
 
-.post-form button:hover {
+.post-form button:hover:enabled {
   background-color: rgb(43, 43, 43);
   border: none;
   color: lightgray;
@@ -164,6 +172,9 @@ main {
   cursor: pointer;
 }
 
+.post-form button:hover:disabled {
+  cursor: not-allowed;
+}
 .post-replies-container {
   border: 0.25em;
 }
@@ -171,7 +182,8 @@ main {
 .reply-container {
   height: 1%;
   padding: 0.5em;
-  margin: 1%;
+  margin-left: 10%;
+  margin-right: 10%;
   background-color: inherit;
   color: lightgray;
   display: grid;
