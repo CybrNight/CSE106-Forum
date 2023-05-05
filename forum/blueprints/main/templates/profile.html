@@ -1,53 +1,46 @@
-{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
-/>
+{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/posts.js') }}"></script>
 <link
   rel="stylesheet"
   href="{{ url_for('static', filename='css/profile.css') }}"
 />
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+
 {% endblock %}
 
 <div class="post-bio-container">
-    <div class="my-posts">
-        <h1 class="my-posts-title">My Posts</h1>
-        {% for post in data %}
-        <table class="post-table">
-          <tr>
-            <td class="post-title">{{ post.title }}</td>
-          </tr>
-          <tr>
-            <td><hr class="white-line"></td>
-          </tr>
-          <tr>
-            <td>{{ post.content }}</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tags-container">
-                <div>
-                  {% for tag in post.tags %}
-                    <p class="tags">{{ tag }}</p>
-                  {% endfor %}
-                </div>
-                <div class="votes">
-                  <p class="upvote-downvote-text">{{ post.upvotes }}</p>
-                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343558918754394/2189px-Thumb_up_icon_2.svg.png" alt="upvote">
-                  <p class="upvote-downvote-text">{{ post.downvotes }}</p>
-                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343631329210378/2189px-Thumb_up_icon_2.svg2.png" alt="downvote">
-                </div>
+  <div class="my-posts">
+      <h1 class="my-posts-title">My Posts</h1>
+      {% for post in data %}
+      <table class="post-table">
+        <tr>
+          <td class="post-title">{{ post.title }}</td>
+        </tr>
+        <tr>
+          <td><hr class="white-line"></td>
+        </tr>
+        <tr>
+          <td>{{ post.content }}</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="tags-container">
+              <div>
+                {% for tag in post.tags %}
+                  <p class="tags">{{ tag }}</p>
+                {% endfor %}
               </div>
-            </td>
-          </tr>
-        </table>
-        <br>
-        {% endfor %}
-    </div>
+              <div class="votes">
+                <p class="upvote-downvote-text">{{ post.upvotes }}</p>
+                <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343558918754394/2189px-Thumb_up_icon_2.svg.png" alt="upvote">
+                <p class="upvote-downvote-text">{{ post.downvotes }}</p>
+                <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343631329210378/2189px-Thumb_up_icon_2.svg2.png" alt="downvote">
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <br>
+      {% endfor %}
+  </div>
 </div>
-
 {% endblock %}
