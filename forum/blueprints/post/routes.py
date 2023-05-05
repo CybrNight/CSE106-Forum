@@ -48,7 +48,7 @@ def get_post(p_uuid, p_uri):
 
         # If we found the post then retrieve its data
         if post:
-            user_vote = VoteType.DEFAULT
+            user_vote = VoteType.NONE
             replies = []
             # Get each PostReply entry from the post
             for p_vote in post.post_votes:
@@ -59,10 +59,23 @@ def get_post(p_uuid, p_uri):
                 # Get the user, and reply information from the PostReply
                 user, _, reply = p_reply.get()
 
+                vote_type = VoteType.NONE
+                for r_vote in reply.reply_votes:
+                    if r_vote.user == current_user:
+                        vote_type = r_vote.vote
+
+                upvote = vote_type == VoteType.UP
+                downvote = vote_type == VoteType.DOWN
+                print({"uuid": reply.uuid,
+                       "author": user.name,
+                       "voteType": vote_type.value,
+                       "content": reply.content,
+                       "votes": reply.total_votes})
                 # Store each Reply object data as JSON
                 replies.append(
                     {"uuid": reply.uuid,
                      "author": user.name,
+                     "voteType": vote_type.value,
                      "content": reply.content,
                      "votes": reply.total_votes})
 
@@ -72,7 +85,7 @@ def get_post(p_uuid, p_uri):
                          "uuid": post.uuid,
                          "content": post.content,
                          "votes": post.total_votes,
-                         "userVote": user_vote.value,
+                         "voteType": user_vote.value,
                          "tags": post.tag_list,
                          "replies": replies}
 
