@@ -22,7 +22,20 @@ def webhook():
 
 @main_bp.route('/', methods=['GET'])
 def index():
-    return redirect(url_for("post_bp.all_posts"))
+    '''
+    Defines Flask route to bring user to posts page
+
+    Methods: GET
+    '''
+
+    # Take user to the teacher or student view based on role
+    # if current_user.role == Role.PROFESSOR:
+    #    return render_template('teacher.html')
+    # elif current_user.role == Role.DEFAULT:
+    #    return render_template('courses.html')
+
+    # Return all-posts template if user passes checks
+    return render_template('all-posts.html')
 
 
 # 404 errors
