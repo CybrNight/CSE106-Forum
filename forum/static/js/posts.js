@@ -6,13 +6,17 @@ class CourseApp {
 
     async getPostTable() {
         const This = this;
+        const selectedFilter = document.getElementById("tagFilter").value;
         let response = await fetch("/getPosts", {
-            method: "GET"
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"filter": selectedFilter})
         });
         if (response.ok) {
             //Get json payload
             const json = await response.json();
-
 
             //Delete all rows in the grades view table
             for (var i = 1; i < this.postTable.rows.length;) {
@@ -39,7 +43,7 @@ class CourseApp {
                 postAuthorCell.innerText = post.author;
                 postDateCell.innerText = post.date;
                 postUpvotesCell.innerText = post.votes;
-                postTagCell.innerText = post.tags;
+                postTagCell.innerText = post.tags; 
             });
         } else {
             throw new InternalError(`${response.status}:${await response.text()}`);
@@ -48,11 +52,16 @@ class CourseApp {
 }
 window.onload = function () {
     const postTable = document.getElementById('posts-table');
+    const dropdown = document.getElementById("tagFilter");
 
-    c = new CourseApp(postTable);
+    c = new CourseApp(postTable, dropdown);
 
     c.getPostTable().catch(error => {
         console.log(error);
+    });
+
+    dropdown.addEventListener('change', button => {
+        c.getPostTable();
     });
 }
 
@@ -74,8 +83,4 @@ function posts(event, tabAction) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabAction).style.display = "block";
     event.currentTarget.className += " active";
-}
-
-function goBack() {
-    window.location.href = "/courses";
 }
