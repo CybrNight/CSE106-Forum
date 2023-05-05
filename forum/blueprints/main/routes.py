@@ -31,7 +31,7 @@ def index():
 @ main_bp.app_errorhandler(404)
 def page_not_found(e):
     print(e)
-    return render_template('error/404.html'), 404
+    return redirect(url_for("main_bp.index"))
 
 
 # 403 errors
