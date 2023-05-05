@@ -70,14 +70,9 @@ async function upvoteReply(uuid, uri) {
     const upvote = $(`#btn-upvote-${uuid}`);
     const downvote = $(`#btn-downvote-${uuid}`);
 
-    if (replyVote(uuid, uri, "UP")) {
-        if (upvote.hasClass("upvote")) {
-            upvote.removeClass("upvote");
-        } else {
-            upvote.addClass("upvote");
-        }
+    if (await replyVote(uuid, uri, "UP")) {
+        console.log("F")
 
-        downvote.removeClass("downvote");
     }
 }
 
@@ -85,14 +80,8 @@ async function downvoteReply(uuid, uri) {
     const upvote = $(`#btn-upvote-${uuid}`);
     const downvote = $(`#btn-downvote-${uuid}`);
 
-    if (replyVote(uuid, uri, "DOWN")) {
-        if (downvote.hasClass("downvote")) {
-            downvote.removeClass("downvote");
-        } else {
-            downvote.addClass("downvote");
-        }
+    if (await replyVote(uuid, uri, "DOWN")) {
 
-        upvote.removeClass("upvote");
     }
 }
 
@@ -104,14 +93,31 @@ async function replyVote(uuid, uri, voteType) {
         },
         body: JSON.stringify({ "uuid": uuid, "vote-type": voteType })
     });
-
     if (response.ok) {
+        console.log(response.status)
         const data = await response.json();
         const replyVotes = data['votes']
         const id = `reply-vote-count-${uuid}`;
 
-        document.getElementById(id).innerText = replyVotes
-        return true;
+        document.getElementById(id).innerText = replyVotes;
+
+        if (voteType === "UP") {
+            if (upvote.hasClass("upvote")) {
+                upvote.removeClass("upvote");
+            } else {
+                upvote.addClass("upvote");
+            }
+
+            downvote.removeClass("downvote");
+        } else if (voteType === "DOWN") {
+            if (downvote.hasClass("downvote")) {
+                downvote.removeClass("downvote");
+            } else {
+                downvote.addClass("downvote");
+            }
+
+            upvote.removeClass("upvote");
+        }
     }
     return false;
 }
