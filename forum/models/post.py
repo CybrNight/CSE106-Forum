@@ -2,6 +2,9 @@ from datetime import datetime
 from forum import db
 from forum.util.hash import gen_model_uuid
 from forum.models.enums import TagType, VoteType
+import re
+
+pattern = re.compile(r"[^\w]+")
 
 
 class PostVote(db.Model):
@@ -78,7 +81,8 @@ class Post(db.Model):
         self.downvotes = 0
 
         self.uuid = gen_model_uuid(Post, 8)
-        self.uri = self.title.replace(" ", "_").lower()
+        self.uri = re.sub(pattern, "_", self.title)
+        self.uri = self.uri.replace(" ", "_").lower()
         db.session.commit()
 
     @property

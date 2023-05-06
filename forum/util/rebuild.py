@@ -1,53 +1,74 @@
 import os
 from random import randint, choice, shuffle
 from time import sleep
+from random import seed
 
 
 def create_posts():
     from forum import db
     from forum.models import User, Post, Tag, Reply, PostReply, TagType
     '''Creates a set number of random posts when rebuilding the database'''
-    res_path = os.path.join(os.getcwd(), "./forum/util/")
+    res_path = os.path.join(os.getcwd(), "./forum/util/sample")
 
-    post_file = os.path.join(res_path, "post.txt")
-    reply_file = os.path.join(res_path, "reply.txt")
+    f_math_post = os.path.join(res_path, "math-post.txt")
+    f_sci_post = os.path.join(res_path, "sci-post.txt")
+    f_cs_post = os.path.join(res_path, "cs-post.txt")
+    f_hist_post = os.path.join(res_path, "hist-post.txt")
 
-    post_text = ""
-    reply_text = ""
-    with open(post_file, 'r') as file:
-        post_text = file.read()
+    with open(f_sci_post, "r") as file:
+        sci_text = file.read()
 
-    with open(reply_file, "r") as file:
-        reply_text = file.read()
+    with open(f_math_post, "r") as file:
+        math_text = file.read()
 
+    with open(f_cs_post, "r") as file:
+        cs_text = file.read()
+
+    with open(f_hist_post, "r") as file:
+        hist_text = file.read()
     posts = {}
-    replies = []
     users = User.query.all()
 
+    seed()
     for i in range(0, 25):
-        type = choice(list(TagType))
-        posts.update({Post(title=f"Post{i+1}"): Tag(type=type)})
+        replies = []
+        post_choice = choice([(sci_text, TagType.SCIENCE),
+                              (math_text, TagType.MATH),
+                              (cs_text, TagType.PROGRAMMING),
+                              (hist_text, TagType.HISTORY)])
+
+        print(post_choice[0])
+        post_text = post_choice[0].split('---')[0].split('--')
+        reply_text = post_choice[0].split('---')[1].split('--')
+
+        print(post_text[0])
+        print(reply_text[1])
+
+        type = post_choice[1]
+        posts.update({Post(title=post_text[0]): Tag(type=type)})
 
         for j in range(0, 5):
-            replies.append(Reply(content=reply_text))
+            replies.append(Reply(content=choice(reply_text)))
 
-    for user in users:
-        if not len(posts) > 0:
-            continue
+        for reply in replies:
+            if not len(posts) > 0:
+                continue
 
-        post, tag = choice(list(posts.items()))
-        del posts[post]
-        post.content = post_text
-        post.tags.append(tag)
-        user.posts.append(post)
-        db.session.add_all([post, tag])
-        if len(replies) > 0:
-            a = randint(2, 4)
-            for j in range(1, a):
-                shuffle(replies)
-                reply = replies.pop()
-                db.session.add_all([user, post, reply])
-                db.session.add(PostReply(user=user, post=post, reply=reply))
+            user = choice(users)
+            post, tag = choice(list(posts.items()))
+            del posts[post]
+            post.content = post_text[1]
+            post.tags.append(tag)
+            user.posts.append(post)
+            db.session.add_all([post, tag])
+            if len(replies) > 0:
+                a = randint(2, 4)
+                for j in range(1, a):
+                    shuffle(replies)
+                    reply = replies.pop()
+                    db.session.add_all([user, post, reply])
+                    db.session.add(
+                        PostReply(user=user, post=post, reply=reply))
 
     db.session.commit()
     print("Committed Course data to database")
