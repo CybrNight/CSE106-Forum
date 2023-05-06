@@ -69,23 +69,20 @@ class PostView {
 async function upvoteReply(uuid, uri) {
     const upvote = $(`#btn-upvote-${uuid}`);
     const downvote = $(`#btn-downvote-${uuid}`);
-
-    if (await replyVote(uuid, uri, "UP")) {
-        console.log("F")
-
-    }
+    await replyVote(uuid, uri, "UP");
 }
 
 async function downvoteReply(uuid, uri) {
     const upvote = $(`#btn-upvote-${uuid}`);
     const downvote = $(`#btn-downvote-${uuid}`);
 
-    if (await replyVote(uuid, uri, "DOWN")) {
-
-    }
+    await replyVote(uuid, uri, "DOWN");
 }
 
 async function replyVote(uuid, uri, voteType) {
+    const upvote = $(`#btn-upvote-${uuid}`);
+    const downvote = $(`#btn-downvote-${uuid}`);
+
     let response = await fetch(`/posts/${uuid}/${uri}/reply`, {
         method: "PUT",
         headers: {
