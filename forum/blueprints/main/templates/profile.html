@@ -16,10 +16,22 @@
     }
   }
 </script>
+<style>
+  img {
+    width: 40%;
+    height: 55%;
+  }
+</style>
 {% endblock %}
 <div class="post-bio-container">
   <div class="my-posts">
     <h1 class="my-posts-title">My Posts</h1>
+    {% if not data|length > 0 %}
+    <h1>And there's no posts in here!</h1>
+    <a href="/"><img src="https://pbs.twimg.com/media/EohVJ5OWMAAGbUF.jpg:large">
+      <h1>Return</h1>
+    </a>
+    {% endif %}
     {% for post in data %}
     <table class="post-table">
       <thead>
