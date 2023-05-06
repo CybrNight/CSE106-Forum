@@ -1,0 +1,52 @@
+{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
+<script src="{{ url_for('static',filename='js/postCreate.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base-new.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/post-view.css') }}" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock %}
+<div class="post-container">
+  <article>
+    <!--This header should be left-aligned-->
+    <h1 id="post-title">Submit a Post</h1>
+    <p id="post-content"></p>
+  </article>
+  <main>
+    <div class="post-replies-container">
+      {% with messages = get_flashed_messages(with_categories=true) %} {% for
+      category, message in messages %}
+      <div class="{{ category }}">{{ message }}</div>
+      {% endfor %} {% endwith %}
+      <form class="post-form" method="post" action=" {{ url_for('post_bp.submit_post') }}">
+        <br />
+        <div class="field">
+          <div class="control">
+            <h3>Post Title</h3>
+            <input name="post-title">
+          </div>
+        </div>
+        <br>
+        <div class="field">
+          <div class="control">
+            <textarea name="post-content" cols="120" rows="5"></textarea>
+          </div>
+        </div>
+        <div class="field">
+          <div class="control"></div>
+          <select name="post-tag" id="tagFilter">
+            <option value="Programming">Programming</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Math">Math</option>
+          </select>
+        </div>
+        <br>
+        <button class="button is-block is-info is-large is-fullwidth">
+          Submit Post
+        </button>
+      </form>
+      <!--This reverse broke before. Keep checking this-->
+    </div>
+  </main>
+  {% endblock %}
+</div>
