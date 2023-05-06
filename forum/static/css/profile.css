@@ -74,3 +74,12 @@ a {
     color: lightgray;
     text-decoration: none;
 }
+
+.fa:hover{
+    cursor: pointer;
+    color:red
+}
+
+button.fa-trash  {
+    font-size: 2em;
+}

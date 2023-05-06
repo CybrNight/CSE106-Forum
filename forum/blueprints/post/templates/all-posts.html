@@ -2,6 +2,7 @@
 <script src="{{ url_for('static',filename='js/posts.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base-new.css') }}" />
 <link rel="stylesheet" href="{{ url_for('static', filename='css/all-posts.css') }}" />
+
 {% endblock %} {% if current_user.is_authenticated %}
 <h1 class="title">Welcome, {{ current_user.name }}!</h1>
 {% else %}
