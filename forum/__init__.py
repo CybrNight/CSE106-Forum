@@ -29,7 +29,7 @@ def create_app():
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
-    from .admin_views import UserView, PostView, ReplyView
+    from .admin_views import UserView, ReplyView, PostView
     from .models import Post, Reply, User
 
     admin_views = Admin(app, name="Dashboard", index_view=UserView(
