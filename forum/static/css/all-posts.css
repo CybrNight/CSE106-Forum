@@ -50,14 +50,14 @@ table {
   display: block;
 }
 .tableFixHead thead th {
-  background-color: #333;
+  background-color: #222;
   position: sticky; /* make the table heads sticky */
   top: 0px; /* table head will be placed from the top of the table and sticks to it */
   color: lightgray;
 }
 
 tr {
-  background-color: #333;
+  background-color: #222;
   height: 90px;
   font-size: 1.25em;
 }

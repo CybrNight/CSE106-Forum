@@ -6,6 +6,33 @@
 {% endblock %}
 <script>
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
+
+  async function deletePost(uuid, uri) {
+    let response = await fetch(`/posts/${uuid}/${uri}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (response.ok) {
+      location.reload();
+    }
+  }
+
+  async function deleteReply(uuid, uri, r_uuid) {
+    let response = await fetch(`/posts/${uuid}/${uri}/reply/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ "uuid": r_uuid })
+    });
+
+    if (response.ok) {
+      location.reload();
+    }
+  }
 </script>
 <div class="post-container">
   <article>
@@ -15,6 +42,9 @@
   </article>
   <div class="post-metric">
     {% set url = url_for('auth_bp.login', next=request.path) %}
+    <h3 class="post-votes">
+      <span class="{{'upvote' if data['votes'] > 0 else 'downvote'}}" id="post-vote-count">{{data.votes}}</span>
+    </h3>
     {% if not current_user.is_authenticated %}
     <a href="{{ url }}" id="post-upvote" class="fa fa-thumbs-up"></a>
     <a href="{{ url }}" id="post-downvote" class="fa fa-thumbs-down"></a>
@@ -22,9 +52,10 @@
     <button id="post-upvote" class="fa fa-thumbs-up"></button>
     <button id="post-downvote" class="fa fa-thumbs-down"></button>
     {% endif %}
-    <h3 class="post-votes">
-      Votes:<span id="post-vote-count">{{data.votes}}</span>
-    </h3>
+    {% if data.a_uuid == current_user.uuid %}
+    <button onclick="deletePost('{{data.uuid}}', '{{data.uri}}')" class="fa fa-trash">
+    </button>
+    {% endif %}
   </div>
   <main>
     <div class="post-replies-container">
@@ -49,17 +80,27 @@
       {% for reply in data.replies|reverse %}
       <div class="reply-container" id="reply-{{ reply.uuid }}">
         <!--NEED TO ADD URL TO USER PROFILE-->
-        <h2 class="reply-author">{{reply.author}}</h2>
         <div class="reply-metric">
           <h3 class="reply-votes">
-            Votes:<span id="reply-vote-count-{{reply.uuid}}">{{reply.votes}}</span>
+            <span class="{{'upvote' if reply['votes'] > 0 else 'downvote'}}"
+              id="reply-vote-count-{{reply.uuid}}">{{reply.votes}}</span>
           </h3>
+          {% if not current_user.is_authenticated %}
+          <a href="{{ url }}" id="reply-upvote" class="fa fa-thumbs-up"></a>
+          <a href="{{ url }}" id="reply-downvote" class="fa fa-thumbs-down"></a>
+          {% else %}
           <button id="btn-upvote-{{ reply.uuid }}" onclick="upvoteReply('{{ reply.uuid }}', post.uri)"
             class="fa fa-thumbs-up {{'upvote' if reply['voteType'] =='UP' }}"></button>
-          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)"
-            class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN' }}"></button>
+          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN'
+                    }}"></button>
+          {% if reply.a_uuid == current_user.uuid %}
+          <button onclick="deleteReply('{{data.uuid}}', '{{data.uri}}', '{{reply.uuid}}')" class="fa fa-trash">
+          </button>
+          {% endif %}
+          {% endif %}
+          <h2 class="reply-author">{{reply.author}}</h2>
+          <p>{{reply.content}}</p>
         </div>
-        <p>{{reply.content}}</p>
       </div>
       {% endfor %}
     </div>

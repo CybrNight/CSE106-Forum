@@ -64,16 +64,10 @@ def get_post(p_uuid, p_uri):
                     if r_vote.user == current_user:
                         vote_type = r_vote.vote
 
-                upvote = vote_type == VoteType.UP
-                downvote = vote_type == VoteType.DOWN
-                print({"uuid": reply.uuid,
-                       "author": user.name,
-                       "voteType": vote_type.value,
-                       "content": reply.content,
-                       "votes": reply.total_votes})
                 # Store each Reply object data as JSON
                 replies.append(
                     {"uuid": reply.uuid,
+                     "a_uuid": user.uuid,
                      "author": user.name,
                      "voteType": vote_type.value,
                      "content": reply.content,
@@ -81,6 +75,8 @@ def get_post(p_uuid, p_uri):
 
             # For the queried post, store its metadata and replies data in JSON
             post_data = {"title": post.title,
+                         "author": post.user.name,
+                         "a_uuid": post.user.uuid,
                          "uri": post.uri,
                          "uuid": post.uuid,
                          "content": post.content,
@@ -88,6 +84,8 @@ def get_post(p_uuid, p_uri):
                          "voteType": user_vote.value,
                          "tags": post.tag_list,
                          "replies": replies}
+
+            print(post_data)
 
             # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
@@ -272,6 +270,27 @@ def handle_reply_vote(p_uuid, p_uri):
         db.session.commit()
         return {"votes": reply.total_votes}
     return "Not found", 404
+
+
+@post_bp.route("/posts/<p_uuid>/<p_uri>/reply/", methods=['DELETE'])
+@login_required
+def handle_reply_delete(p_uuid, p_uri):
+    '''
+    Defines Flask route to delete a Post from database
+
+    Methods: POST
+    '''
+
+    data = request.json
+    r_uuid = data['uuid']
+    print(r_uuid)
+    reply = Reply.query.filter_by(uuid=r_uuid).first()
+
+    if reply:
+        db.session.delete(reply)
+        db.session.commit()
+        return "Sucess!", 200
+    return "Error", 404
 
 
 @post_bp.route('/getPosts/', methods=['PUT'])
