@@ -131,11 +131,11 @@ a:hover{
   color:indianred;
 }
 
-.fa.upvote {
+.upvote {
   color: orange;
 }
 
-.fa.downvote {
+.downvote {
   color: royalblue;
 }
 
@@ -145,10 +145,6 @@ a:hover{
   font-size: 1.5em;
   margin-left: 10%;
   margin-right: -10%;
-}
-
-.post-metric h3 span {
-  color: orange;
 }
 
 main {
@@ -228,10 +224,6 @@ main {
 .reply-container h2 {
   size: 10in;
   color: rgb(238, 95, 95);
-}
-
-.reply-container span {
-  color: orange;
 }
 
 .reply-metric .fa {

@@ -28,6 +28,16 @@ class PostView {
             const data = await response.json();
             this.voteCount.innerText = data.votes;
 
+            const votesDisp = $(`#post-vote-count`);
+
+            if (parseInt(data.votes) < 0) {
+                votesDisp.removeClass("upvote");
+                votesDisp.addClass("downvote");
+            } else {
+                votesDisp.addClass("upvote");
+                votesDisp.removeClass("downvote");
+            }
+
             const up = voteType == "UP"
             const down = voteType == "DOWN"
 
@@ -67,15 +77,10 @@ class PostView {
 
 
 async function upvoteReply(uuid, uri) {
-    const upvote = $(`#btn-upvote-${uuid}`);
-    const downvote = $(`#btn-downvote-${uuid}`);
     await replyVote(uuid, uri, "UP");
 }
 
 async function downvoteReply(uuid, uri) {
-    const upvote = $(`#btn-upvote-${uuid}`);
-    const downvote = $(`#btn-downvote-${uuid}`);
-
     await replyVote(uuid, uri, "DOWN");
 }
 
@@ -97,6 +102,15 @@ async function replyVote(uuid, uri, voteType) {
         const id = `reply-vote-count-${uuid}`;
 
         document.getElementById(id).innerText = replyVotes;
+        const votesDisp = $(`#${id}`);
+
+        if (parseInt(replyVotes) < 0) {
+            votesDisp.removeClass("upvote");
+            votesDisp.addClass("downvote");
+        } else {
+            votesDisp.addClass("upvote");
+            votesDisp.removeClass("downvote");
+        }
 
         if (voteType === "UP") {
             if (upvote.hasClass("upvote")) {
