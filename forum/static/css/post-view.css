@@ -1,0 +1,213 @@
+/*
+  1. Use a more-intuitive box-sizing model.
+*/
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin
+*/
+* {
+  margin: 0;
+}
+/*
+  3. Allow percentage-based heights in the application
+*/
+html,
+
+/*
+  Typographic tweaks!
+  4. Add accessible line-height
+  5. Improve text rendering
+*/
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+/*
+  6. Improve media defaults
+*/
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+/*
+  7. Remove built-in form typography styles
+*/
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+/*
+  8. Avoid text overflows
+*/
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+/*
+  9. Create a root stacking context
+*/
+#root,
+#__next {
+  isolation: isolate;
+}
+
+.post-container {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.post-container article h1 {
+  font-size: 2.5em;
+  color: rgb(255, 180, 41);
+  display: flex;
+  margin-left: 10%;
+}
+
+a{
+  text-decoration: none;
+}
+
+.post-container article p {
+  text-align: justify;
+  margin-left: 10%;
+  margin-right: 20%;
+  padding: 1%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  border: 0.25em solid rgb(75, 75, 75);
+  color: lightgray;
+  background-color: rgb(34, 34, 34);
+}
+
+a:hover{
+  cursor: pointer;
+}
+
+.fa {
+  color: lightgray;
+  border: none;
+  background-color: inherit;
+}
+
+.fa:hover:enabled {
+  cursor: pointer;
+}
+
+.post-metric .fa {
+  display: inline;
+  font-size: 1.5em;
+  margin-left: 10%;
+  margin-right: -10%;
+}
+
+.fa.upvote {
+  color: orange;
+}
+
+.fa.downvote {
+  color: cornflowerblue;
+}
+
+.post-metric h3 {
+  display: inline;
+  color: lightgray;
+  font-size: 1.5em;
+  margin-left: 10%;
+  margin-right: -10%;
+}
+
+.post-metric h3 span {
+  color: orange;
+}
+
+main {
+  padding: 0%;
+  margin: 5%;
+  display: block;
+  min-height: 100vh;
+  min-width: 100vh;
+}
+
+.post-form {
+  margin-left: 15%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.post-form textarea {
+  background-color: rgb(34, 34, 34);
+  color: lightgray;
+}
+
+.post-form input {
+  background-color: rgb(34, 34, 34);
+  color: lightgray;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.post-form h3 {
+  color: lightgray;
+}
+
+.post-form button {
+  background-color: black;
+  border: none;
+  color: lightgray;
+  padding: 1%;
+}
+
+.post-form button:hover:enabled {
+  background-color: rgb(43, 43, 43);
+  border: none;
+  color: lightgray;
+  padding: 1%;
+  cursor: pointer;
+}
+
+.post-form button:hover:disabled {
+  cursor: not-allowed;
+}
+.post-replies-container {
+  border: 0.25em;
+}
+
+.reply-container {
+  height: 1%;
+  padding: 0.5em;
+  margin-left: 10%;
+  margin-right: 10%;
+  background-color: inherit;
+  color: lightgray;
+  display: grid;
+  border: 0.25em solid rgb(75, 75, 75);
+}
+
+.reply-container .reply-author {
+  size: 10in;
+  color: rgb(238, 95, 95);
+}
+
+.reply-container h2 {
+  size: 10in;
+  color: rgb(238, 95, 95);
+}
+
+.reply-container span {
+  color: orange;
+}
