@@ -37,12 +37,8 @@ def create_posts():
                               (cs_text, TagType.PROGRAMMING),
                               (hist_text, TagType.HISTORY)])
 
-        print(post_choice[0])
         post_text = post_choice[0].split('---')[0].split('--')
         reply_text = post_choice[0].split('---')[1].split('--')
-
-        print(post_text[0])
-        print(reply_text[1])
 
         type = post_choice[1]
         posts.update({Post(title=post_text[0]): Tag(type=type)})

@@ -30,7 +30,6 @@ def login():
         # login code goes here
         email = request.form.get('email')
         password = request.form.get('password')
-        print(request.form.get('next'))
         remember = True if request.form.get('remember') else False
 
         user = User.query.filter_by(email=email).first()
