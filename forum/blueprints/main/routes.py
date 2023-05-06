@@ -73,12 +73,17 @@ def profile():
         for tag in p.tags:
             tags.append(tag.type.value)
 
+        post_content = ""
+        for i in range(0, 3):
+            post_content += p.content[:30]
+
         posts.append({"title": p.title,
                       "uri": p.uri,
                       "uuid": p.uuid,
-                      "content": p.content,
+                      "content": post_content,
                       "upvotes": p.upvotes,
                       "downvotes": p.downvotes,
+                      "date": p.date,
                       "tags": tags})
 
     return render_template('profile.html', data=posts)
