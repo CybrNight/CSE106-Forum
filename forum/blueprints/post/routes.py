@@ -190,7 +190,7 @@ def add_post_reply(p_uuid, p_uri):
                             p_uri=p_uri))
 
 
-@post_bp.route("/posts/<p_uuid>/<p_uri>/", methods=['DELETE'])
+@post_bp.route("/posts/<p_uuid>/<p_uri>/delete/", methods=['DELETE'])
 @login_required
 def handle_post_delete(p_uuid, p_uri):
     '''
