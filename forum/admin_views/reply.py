@@ -5,15 +5,15 @@ from forum import db
 import uuid
 
 
-class PostView(ModelView):
+class ReplyView(ModelView):
 
     '''Defines AdminView for admin control panel'''
     column_hide_backrefs = False
-    column_list = ('uuid', 'content', 'user',
+    column_list = ('uuid', 'post_replies',
                    'upvotes', 'downvotes')
 
     # Setup field that are exlcuded from User model table view in admin
-    form_excluded_columns = ('post_replies')
+    form_excluded_columns = ('uuid', 'salt')
     can_create = False
     can_edit = True
 
