@@ -8,7 +8,7 @@
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
 
   async function deletePost(uuid, uri) {
-    let response = await fetch(`/posts/${uuid}/${uri}/`, {
+    let response = await fetch(`/posts/${uuid}/${uri}/delete/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"

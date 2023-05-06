@@ -75,11 +75,12 @@ a {
     text-decoration: none;
 }
 
-.fa:hover{
+.fa-trash:hover{
     cursor: pointer;
-    color:red
+    color:tomato;
 }
 
-button.fa-trash  {
+
+a.fa-trash  {
     font-size: 2em;
 }
