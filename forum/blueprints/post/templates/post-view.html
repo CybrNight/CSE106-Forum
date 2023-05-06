@@ -6,6 +6,19 @@
 {% endblock %}
 <script>
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
+
+  async function deletePost(uuid, uri, r_uuid) {
+    let response = await fetch(`/posts/${uuid}/${uri}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (response.ok) {
+      location.reload();
+    }
+  }
 </script>
 <div class="post-container">
   <article>
@@ -21,6 +34,10 @@
     {% else %}
     <button id="post-upvote" class="fa fa-thumbs-up"></button>
     <button id="post-downvote" class="fa fa-thumbs-down"></button>
+    {% endif %}
+    {% if data.a_uuid == current_user.uuid %}
+    <button onclick="deletePost('{{data.uuid}}', '{{data.uri}}')" class="fa fa-trash">
+    </button>
     {% endif %}
     <h3 class="post-votes">
       Votes:<span id="post-vote-count">{{data.votes}}</span>
@@ -56,8 +73,12 @@
           </h3>
           <button id="btn-upvote-{{ reply.uuid }}" onclick="upvoteReply('{{ reply.uuid }}', post.uri)"
             class="fa fa-thumbs-up {{'upvote' if reply['voteType'] =='UP' }}"></button>
-          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)"
-            class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN' }}"></button>
+          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)" class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN'
+          }}"></button>
+          {% if reply.a_uuid == current_user.uuid %}
+          <button onclick="deleteReply('{{data.uuid}}', '{{data.uri}}', '{{reply.uuid}}')" class="fa fa-trash">
+          </button>
+          {% endif %}
         </div>
         <p>{{reply.content}}</p>
       </div>
