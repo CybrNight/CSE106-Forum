@@ -85,8 +85,6 @@ def get_post(p_uuid, p_uri):
                          "tags": post.tag_list,
                          "replies": replies}
 
-            print(post_data)
-
             # Return post-view template with post_data filled in
             return render_template("post-view.html", data=post_data)
 
@@ -180,7 +178,6 @@ def add_post_reply(p_uuid, p_uri):
 
     # Create new Reply object, and add new PostReply to the database
     reply = Reply(content=content)
-    print(post.uuid)
     db.session.add(PostReply(user=current_user, post=post, reply=reply))
     db.session.commit()
 
@@ -216,7 +213,6 @@ def handle_reply_vote(p_uuid, p_uri):
     Methods: PUT
     '''
     data = request.json
-    print(data['uuid'])
     reply = Reply.query.filter_by(uuid=data['uuid']).first()
 
     if not current_user.is_authenticated:
@@ -283,7 +279,6 @@ def handle_reply_delete(p_uuid, p_uri):
 
     data = request.json
     r_uuid = data['uuid']
-    print(r_uuid)
     reply = Reply.query.filter_by(uuid=r_uuid).first()
 
     if reply:
@@ -302,8 +297,6 @@ def get_posts():
     '''
 
     filter = request.json
-    print(filter)
-
     if request.method == 'PUT':
         posts = Post.query.all()
         posts_data = []

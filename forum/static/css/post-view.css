@@ -72,10 +72,11 @@ h6 {
 }
 .submit-view article h1,
 .post-container article h1 {
-  font-size: 2.5em;
-  color: rgb(255, 180, 41);
+  font-size: 1.75em;
+  color: lightgray;
   display: flex;
   margin-left: 10%;
+  margin-right: 15%;
 }
 
 #submit-title{
