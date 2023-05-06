@@ -17,9 +17,10 @@ h1 {
   margin: 20px;
 }
 
-a {
+tr a {
   color: white;
   text-decoration: none;
+  font-size: 1em;
 }
 
 .rounded {
@@ -132,21 +133,6 @@ tr:last-of-type {
   margin: auto;
 }
 
-#add-course,
-#remove-course {
-  vertical-align: top;
-  text-align: center;
-  background-color: #0aae95;
-  color: white;
-  width: 60px;
-  height: 20px;
-  padding: 5px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 8px;
-}
-
 #applyFilt {
   float: right;
 }
@@ -159,4 +145,11 @@ select {
   float: right;
   margin-right: 5px;
   margin-top: 4px;
+}
+
+.fa {
+  color: lightgray;
+  border: none;
+  background-color: inherit;
+  font-size: 20;
 }
