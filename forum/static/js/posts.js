@@ -39,7 +39,7 @@ class CourseApp {
                 var postTagCell = row.insertCell();
 
                 //Set cell values to the course information
-                postTitleCell.innerHTML = `<a href="/posts/${post.uuid}/${post.uri}/">${post.title}</a>`;
+                postTitleCell.innerHTML = `<a href="/posts/${post.uuid}/${post.uri}/">${post.title.substring(0, 50)}</a>`;
                 postAuthorCell.innerText = post.author;
                 postDateCell.innerText = post.date;
                 postUpvotesCell.innerText = post.votes;
