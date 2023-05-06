@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
 <script>
   async function deletePost(uuid, uri) {
-    let response = await fetch(`/posts/${uuid}/${uri}/`, {
+    let response = await fetch(`/posts/${uuid}/${uri}/delete/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
