@@ -201,7 +201,7 @@ def handle_post_delete(p_uuid, p_uri):
 
     post = Post.query.filter_by(uuid=p_uuid, uri=p_uri).first()
 
-    if post:
+    if post and post.user.uuid == current_user.uuid:
         db.session.delete(post)
         db.session.commit()
         return "Sucess!", 200
