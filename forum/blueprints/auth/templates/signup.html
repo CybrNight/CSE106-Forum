@@ -1,55 +1,40 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base-new.html" %} {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base-new.css') }}" />
 <div class="column is-4 is-offset-4">
   <h3 class="title">Sign Up</h3>
   <div class="box">
-    {% with messages = get_flashed_messages() %}
-{% if messages %}
+    {% with messages = get_flashed_messages() %} {% if messages %}
     <div class="notification is-danger">
-        {{ messages[0] }}. Go to <a href="{{ url_for('auth_bp.login') }}">login page</a>.
+      {{ messages[0] }}. Go to
+      <a href="{{ url_for('auth_bp.login', next=request.args.get('next')) }}">login page</a>
     </div>
-{% endif %}
-{% endwith %}
-<form method="POST" action="/signup">
+    {% endif %} {% endwith %}
     <form method="POST" action="/signup">
-      <div class="field">
-        <div class="control">
-          <input
-            class="input is-large"
-            type="email"
-            name="email"
-            placeholder="Email"
-            autofocus=""
-          />
+      <form method="POST" action="/signup">
+        <div class="field">
+          <div class="control">
+            <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="" />
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="control">
-          <input
-            class="input is-large"
-            type="text"
-            name="name"
-            placeholder="Name"
-            autofocus=""
-          />
+        <div class="field">
+          <div class="control">
+            <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="" />
+          </div>
         </div>
-      </div>
 
-      <div class="field">
-        <div class="control">
-          <input
-            class="input is-large"
-            type="password"
-            name="password"
-            placeholder="Password"
-          />
+        <div class="field">
+          <div class="control">
+            <input class="input is-large" type="password" name="password" placeholder="Password" />
+          </div>
         </div>
-      </div>
 
-      <button class="button is-block is-info is-large is-fullwidth">
-        Sign Up
-      </button>
+        <button class="button is-block is-info is-large is-fullwidth">
+          Sign Up
+        </button>
+      </form>
+      {% endblock %}
     </form>
   </div>
 </div>
-{% endblock %}

@@ -12,6 +12,15 @@ auth_bp = Blueprint('auth_bp', __name__,
                     static_folder="static")
 
 
+def redirect_dest(fallback):
+    dest = request.args.get('next')
+    try:
+        dest_url = url_for(dest)
+        return redirect(dest_url)
+    except Exception as e:
+        return redirect(dest)
+
+
 @auth_bp.route('/login/', methods=['GET', 'POST'])
 def login():
     # Defines Flask route to handle login requests
@@ -21,13 +30,14 @@ def login():
         # login code goes here
         email = request.form.get('email')
         password = request.form.get('password')
+        print(request.form.get('next'))
         remember = True if request.form.get('remember') else False
 
         user = User.query.filter_by(email=email).first()
         # Check if the user does not exist or password has does not match
         if not user or not check_salt_hash(user.password, password, user.salt):
             flash('Please check your login details and try again.')
-            return redirect(url_for('auth_bp.login'))
+            return redirect(url_for('auth_bp.login', next=request.args.get('next')))
 
         # Login user if they pass auth check
         login_user(user, remember=remember)
@@ -37,7 +47,7 @@ def login():
             return (redirect("/admin"))
 
         # Take regular users to the main view
-        return redirect(url_for("main_bp.index"))
+        return redirect_dest(fallback=url_for("main_bp.index"))
 
 
 @auth_bp.route('/signup/', methods=['GET', 'POST'])

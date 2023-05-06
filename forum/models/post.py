@@ -34,41 +34,6 @@ class PostVote(db.Model):
         return (self.user, self.post)
 
 
-class PostReply(db.Model):
-    '''Defines an association object linking a User to a Reply on a Post'''
-    __tablename__ = "post_reply"
-
-    id = db.Column(db.Integer,
-                   primary_key=True)
-
-    # Define user_uuid ForeignKey column
-    user_uuid = db.Column(db.VARCHAR(255),
-                          db.ForeignKey("user.uuid"),
-                          nullable=False)
-
-    # Define post_uuid ForeignKey column
-    post_uuid = db.Column(db.VARCHAR(255),
-                          db.ForeignKey("post.uuid"),
-                          nullable=False)
-
-    # Define reply_uuid ForeignKey column
-    reply_uuid = db.Column(db.VARCHAR(255),
-                           db.ForeignKey("reply.uuid"),
-                           nullable=False)
-
-    # Define table unique contrains
-    __table_args__ = (db.UniqueConstraint(user_uuid, post_uuid, reply_uuid),)
-
-    # Define user, post, and reply association
-    user = db.relationship("User", back_populates="post_replies")
-    post = db.relationship("Post", back_populates="post_replies")
-    reply = db.relationship("Reply", back_populates="post_replies")
-
-    # Define method to retrieve an entry as a tuple
-    def get(self):
-        return (self.user, self.post, self.reply)
-
-
 # Define many-to-many assocation table linking a Post to a Tag
 post_tags = db.Table("post_tags",
                      db.Column("tag_id", db.Integer, db.ForeignKey(
@@ -83,7 +48,8 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.VARCHAR(255), unique=True, nullable=False)
-    title = db.Column(db.String, unique=True)
+    title = db.Column(db.String, unique=False)
+    uri = db.Column(db.String, unique=False)
     author_id = db.Column(db.VARCHAR(255), db.ForeignKey(
         "user.uuid"), nullable=False)
     content = db.Column(db.VARCHAR)
@@ -104,7 +70,7 @@ class Post(db.Model):
                                  lazy="joined",
                                  cascade='all, delete-orphan')
 
-    def __init__(self, title, content=""):
+    def __init__(self, title="NOTHING", content="NOTHING"):
         self.title = title
         self.content = content
         self.date = datetime.now().date().strftime("%d %b %Y")
@@ -112,6 +78,7 @@ class Post(db.Model):
         self.downvotes = 0
 
         self.uuid = gen_model_uuid(Post, 8)
+        self.uri = self.title.replace(" ", "_").lower()
         db.session.commit()
 
     @property
@@ -143,25 +110,3 @@ class Tag(db.Model):
 
     def __init__(self, type):
         self.type = type
-
-
-class Reply(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    uuid = db.Column(db.VARCHAR(255), nullable=False, unique=True)
-    content = db.Column(db.VARCHAR())
-    upvotes = db.Column(db.Integer)
-    downvotes = db.Column(db.Integer)
-    post_replies = db.relationship("PostReply",
-                                   back_populates="reply",
-                                   lazy="joined",
-                                   cascade='all, delete-orphan')
-
-    def __init__(self, content=""):
-        self.upvotes = 1
-        self.downvotes = 0
-        self.content = content
-        self.uuid = gen_model_uuid(Reply, 8)
-
-    @property
-    def total_votes(self):
-        return self.upvotes - self.downvotes

@@ -1,5 +1,5 @@
 from forum.models import Post
-from flask import Blueprint, redirect, render_template, request
+from flask import Blueprint, redirect, render_template, request, url_for
 from flask_login import login_required, current_user
 import git
 
@@ -20,17 +20,31 @@ def webhook():
         return 'Wrong event type', 400
 
 
-@ main_bp.route('/', methods=['GET'])
+@main_bp.route('/', methods=['GET'])
 def index():
-    # Defines main Flask route for homepage
-    return render_template('index.html')
+    '''
+    Defines Flask route to bring user to posts page
+
+    Methods: GET
+    '''
+
+    # Take user to the teacher or student view based on role
+    # if current_user.role == Role.PROFESSOR:
+    #    return render_template('teacher.html')
+    # elif current_user.role == Role.DEFAULT:
+    #    return render_template('courses.html')
+
+    # Return all-posts template if user passes checks
+    return render_template('all-posts.html')
 
 
 # 404 errors
+
+
 @ main_bp.app_errorhandler(404)
 def page_not_found(e):
     print(e)
-    return render_template('error/404.html'), 404
+    return redirect(url_for("main_bp.index"))
 
 
 # 403 errors
@@ -55,9 +69,21 @@ def profile():
     posts = []
     # For every post in query, add to JSON to send to template
     for p in post:
+        tags = []
+        for tag in p.tags:
+            tags.append(tag.type.value)
+
+        post_content = ""
+        for i in range(0, 3):
+            post_content += p.content[:30]
+
         posts.append({"title": p.title,
-                      "content": p.content,
+                      "uri": p.uri,
+                      "uuid": p.uuid,
+                      "content": post_content,
                       "upvotes": p.upvotes,
-                      "downvotes": p.downvotes})
+                      "downvotes": p.downvotes,
+                      "date": p.date,
+                      "tags": tags})
 
     return render_template('profile.html', data=posts)

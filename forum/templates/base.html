@@ -10,6 +10,7 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='css/base.css') }}"
     />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
@@ -32,6 +33,7 @@
                 current_user.is_admin() %}
                 <a href="{{ url_for('main_bp.profile') }}" class="navbar-item">
                   Profile
+                </a>
                 <a href="{{ url_for('post_bp.all_posts') }}" class="navbar-item">
                   Posts
                 </a>

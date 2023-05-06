@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, flash, redirect, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_admin import Admin
@@ -26,7 +26,6 @@ def create_app():
     db.init_app(app)
 
     login_manager = LoginManager()
-    login_manager.login_view = 'auth_bp.login'
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
@@ -43,6 +42,11 @@ def create_app():
         # Since the User uuid is the primary key User table
         # use it in the query for the User
         return User.query.get(int(uuid))
+
+    @login_manager.unauthorized_handler
+    def handle_needs_login():
+        flash("You have to be logged in to access this page.")
+        return redirect(url_for('auth_bp.login', next=request.path))
 
     # Import and register blueprints
     from .blueprints import auth_bp, main_bp, post_bp

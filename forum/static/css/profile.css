@@ -1,26 +1,20 @@
 .my-posts-title {
     font-size: 25px;
-    display: inline-block;
-    vertical-align: top;
-}
-
-.bio-title {
-    font-size: 25px;
-    display: inline-block;
-    vertical-align: top;
+    display: block;
+    color: lightgray;
+    text-align: center;
 }
 
 .post-bio-container {
     display: flex;
     position: relative;
-    margin-top: -40vh;
     
 }
 
 .my-posts {
     position: relative;
-    width: 70%;
-    margin-right: 20px;
+    width: 100%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 hr.white-line {
@@ -48,6 +42,7 @@ hr.white-line {
     justify-content: center;
     margin-left: 5px;
     margin-right: 5px;
+    display: inline;
     
 }
 
@@ -56,16 +51,17 @@ hr.white-line {
     display: inline-block;
     width: 100%;
     height: 75%;
-    background-color: #08a18a;
+    background-color: rgb(129, 129, 129);
     color: white;
     text-align: center;
     line-height: 35px;
     margin-right: 10px;
+    display: inline;
 }
 
 .votes {
     text-align: right;
-    display: flex;
+    display: inline;
     justify-content: flex-end;
 }
 
@@ -73,29 +69,17 @@ hr.white-line {
     font-size: 25px;
 }
 
-.post-table {
-    border-collapse: collapse;
+
+a {
+    color: lightgray;
+    text-decoration: none;
 }
 
-.bio {
-    position: relative;
-    width: 30%;
-    margin-left: 20px;
+.fa:hover{
+    cursor: pointer;
+    color:red
 }
 
-.profile-pic-container {
-    width: 100%;
-    height: 300px;
-    position: relative;
-    margin-top: 1em;
-    overflow: hidden;
-    display: inline-block;
-}
-  
-.profile-pic {
-    border-radius: 8px;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; 
-    transition: filter 0.3s ease;
+button.fa-trash  {
+    font-size: 2em;
 }

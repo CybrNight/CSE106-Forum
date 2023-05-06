@@ -1,59 +1,55 @@
-{% extends "base.html" %} {% block content %} {% block head %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
-/>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/profile.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
+{% extends "base-new.html" %} {% block content %} {% block head %} {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/all-posts.css') }}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
+<script>
+  async function deletePost(uuid, uri) {
+    let response = await fetch(`/posts/${uuid}/${uri}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (response.ok) {
+      location.reload();
+    }
+  }
+</script>
 {% endblock %}
-
 <div class="post-bio-container">
-    <div class="my-posts">
-        <h1 class="my-posts-title">My Posts</h1>
-        {% for post in data %}
-        <table class="post-table">
-          <tr>
-            <td class="post-title">{{ post.title }}</td>
-          </tr>
-          <tr>
-            <td><hr class="white-line"></td>
-          </tr>
-          <tr>
-            <td>{{ post.content }}</td>
-          </tr>
-          <tr>
-            <td>
-              <div class="tags-container">
-                <div>
-                  <p class="tags">some tag</p>
-                </div>
-                <div class="votes">
-                  <p class="upvote-downvote-text">{{ post.upvotes }}</p>
-                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343558918754394/2189px-Thumb_up_icon_2.svg.png" alt="upvote">
-                  <p class="upvote-downvote-text">{{ post.downvotes }}</p>
-                  <img class="upvote-downvote" src="https://cdn.discordapp.com/attachments/607042853486723088/1101343631329210378/2189px-Thumb_up_icon_2.svg2.png" alt="downvote">
-                </div>
-              </div>
-            </td>
-          </tr>
-        </table>
-        <br>
-        {% endfor %}
-    </div>
-    <div class="bio">
-        <h1 class="bio-title">Bio</h1>
-        <div class="profile-pic-container">
-            <img class="profile-pic" src="https://www.alleycat.org/wp-content/uploads/2021/02/344x361_FoundACat.jpg" 
-                alt="profile-pic">
-        </div>
-            
-    </div>
+  <div class="my-posts">
+    <h1 class="my-posts-title">My Posts</h1>
+    {% for post in data %}
+    <table class="post-table">
+      <thead>
+        <tr>
+          <th class="titleName"><a href="{{ url_for('post_bp.get_post',
+                  p_uuid=post.uuid, p_uri=post.uri) }}">{{
+              post.title }}<button onclick="deletePost('{{post.uuid}}', '{{post.uri}}')" class="fa fa-trash"></a>
+            </button></a></th>
+          <th class="time">Post Date</th>
+          <th class="upvotes">Votes</th>
+          <th class="postTag">Tags</th>
+      </thead>
+      <tr>
+        <td>{{ post.content }}</td>
+        <td>{{ post.date }}</td>
+        <td>
+          <div class="fa fa-thumbs-up">{{ post.upvotes }}</div>
+          <div class="fa fa-thumbs-down">{{ post.downvotes }}</div>
+        </td>
+        <td>
+          {% for tag in post.tags %}
+          <span class="">{{ tag }}</p>
+            {% endfor %}
+        </td>
+  </div>
+  </td>
+  </tr>
+  {% endfor %}
+  </table>
+  <br>
 </div>
-
+</div>
 {% endblock %}
