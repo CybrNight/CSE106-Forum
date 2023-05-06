@@ -12,10 +12,10 @@ class UserView(ModelView):
 
     '''Defines AdminView for admin control panel'''
     column_hide_backrefs = False
-    column_list = ('uuid', 'email', 'name', 'role')
+    column_list = ('uuid', 'salt', 'email', 'name', 'role')
 
     # Setup field that are exlcuded from User model table view in admin
-    form_excluded_columns = ('uuid', 'salt')
+    form_excluded_columns = ('uuid')
 
     # Set fields visible when creating new instance of User
     form_create_rules = ('email', 'name', 'password', 'role')

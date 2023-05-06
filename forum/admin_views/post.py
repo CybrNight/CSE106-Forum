@@ -9,11 +9,11 @@ class PostView(ModelView):
 
     '''Defines AdminView for admin control panel'''
     column_hide_backrefs = False
-    column_list = ('uuid', 'salt', 'user',
+    column_list = ('uuid', 'content', 'user',
                    'upvotes', 'downvotes')
 
     # Setup field that are exlcuded from User model table view in admin
-    form_excluded_columns = ('uuid', 'salt')
+    form_excluded_columns = ('post_replies')
     can_create = False
     can_edit = True
 
