@@ -6,11 +6,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 <div class="post-container">
-  <article>
-    <!--This header should be left-aligned-->
-    <h1 id="post-title">Submit a Post</h1>
-    <p id="post-content"></p>
-  </article>
   <main>
     <div class="post-replies-container">
       {% with messages = get_flashed_messages(with_categories=true) %} {% for
@@ -21,8 +16,11 @@
         <br />
         <div class="field">
           <div class="control">
-            <h3>Post Title</h3>
-            <input name="post-title">
+            <article>
+              <!--This header should be left-aligned-->
+              <h1 id="submit-title">Submit Post</h1>
+            </article>
+            <input class="post-form-input" name="post-title">
           </div>
         </div>
         <br>
