@@ -38,8 +38,8 @@
         <tr>
           <th class="titleName"><a href="{{ url_for('post_bp.get_post',
                   p_uuid=post.uuid, p_uri=post.uri) }}">{{
-              post.title }}<button onclick="deletePost('{{post.uuid}}', '{{post.uri}}')" class="fa fa-trash"></a>
-            </button></a></th>
+              post.title }}<button onclick="deletePost('{{post.uuid}}', '{{post.uri}}')" class="fa fa-trash">
+              </button></th>
           <th class="time">Post Date</th>
           <th class="upvotes">Votes</th>
           <th class="postTag">Tags</th>
