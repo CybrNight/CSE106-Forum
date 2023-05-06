@@ -79,6 +79,14 @@ h6 {
   margin-right: 15%;
 }
 
+.post-container h3.post-tags{
+  font-size: 1.25em;
+  color: lightgray;
+  display: flex;
+  margin-left: 10%;
+  margin-right: 15%;
+}
+
 #submit-title{
   margin-left:-0.25%;
 }

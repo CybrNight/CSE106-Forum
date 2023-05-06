@@ -38,7 +38,8 @@
   <article>
     <!--This header should be left-aligned-->
     <h1 id="post-title">{{data.title}}</h1>
-    <p id="post-content">{{data.content}}</p>
+    <h3 class="post-tags">Tags:{% for tag in data.tags %} {{tag}} {% endfor %}</h1>
+      <p id="post-content">{{data.content}}</p>
   </article>
   <div class="post-metric">
     {% set url = url_for('auth_bp.login', next=request.path) %}

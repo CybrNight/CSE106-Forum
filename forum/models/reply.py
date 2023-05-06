@@ -65,6 +65,9 @@ class PostReply(db.Model):
     post = db.relationship("Post", back_populates="post_replies")
     reply = db.relationship("Reply", back_populates="post_replies")
 
+    def __repr__(self):
+        return (self.user.name)
+
     # Define method to retrieve an entry as a tuple
     def get(self):
         return (self.user, self.post, self.reply)

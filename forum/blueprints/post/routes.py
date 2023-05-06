@@ -73,7 +73,10 @@ def get_post(p_uuid, p_uri):
                      "content": reply.content,
                      "votes": reply.total_votes})
 
-            # For the queried post, store its metadata and replies data in JSON
+            tags = []
+            for tag in post.tags:
+                tags.append(tag.type.value)
+                # For the queried post, store its metadata and replies data in JSON
             post_data = {"title": post.title,
                          "author": post.user.name,
                          "a_uuid": post.user.uuid,
@@ -82,7 +85,7 @@ def get_post(p_uuid, p_uri):
                          "content": post.content,
                          "votes": post.total_votes,
                          "voteType": user_vote.value,
-                         "tags": post.tag_list,
+                         "tags": tags,
                          "replies": replies}
 
             # Return post-view template with post_data filled in

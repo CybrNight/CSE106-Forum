@@ -18,15 +18,15 @@
           <div class="control">
             <article>
               <!--This header should be left-aligned-->
-              <h1 id="submit-title">Submit Post</h1>
+              <h1 id="submit-title">Create Post</h1>
             </article>
-            <input class="post-form-input" name="post-title">
+            <input id="input-post-title" class="post-form-input" name="post-title">
           </div>
         </div>
         <br>
         <div class="field">
           <div class="control">
-            <textarea name="post-content" cols="120" rows="5"></textarea>
+            <textarea id="textarea-post-content" name="post-content" cols="120" rows="5"></textarea>
           </div>
         </div>
         <div class="field">
@@ -39,8 +39,8 @@
           </select>
         </div>
         <br>
-        <button class="button is-block is-info is-large is-fullwidth">
-          Submit Post
+        <button id="btn-post-create" class="button is-block is-info is-large is-fullwidth">
+          Post
         </button>
       </form>
       <!--This reverse broke before. Keep checking this-->
