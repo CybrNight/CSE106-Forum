@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}" />
 <script>
   async function deletePost(uuid, uri) {
-    let response = await fetch(`/posts/${uuid}/${uri}`, {
+    let response = await fetch(`/posts/${uuid}/${uri}/`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json"
@@ -38,8 +38,7 @@
         <tr>
           <th class="titleName"><a href="{{ url_for('post_bp.get_post',
                   p_uuid=post.uuid, p_uri=post.uri) }}">{{
-              post.title }}<button onclick="deletePost('{{post.uuid}}', '{{post.uri}}')" class="fa fa-trash">
-              </button></th>
+              post.title }}<a onclick="deletePost('{{post.uuid}}', '{{post.uri}}')" class="fa fa-trash"></a></th>
           <th class="time">Post Date</th>
           <th class="upvotes">Votes</th>
           <th class="postTag">Tags</th>
