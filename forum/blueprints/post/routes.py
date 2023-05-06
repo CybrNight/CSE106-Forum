@@ -192,6 +192,24 @@ def add_post_reply(p_uuid, p_uri):
                             p_uri=p_uri))
 
 
+@post_bp.route("/posts/<p_uuid>/<p_uri>/", methods=['DELETE'])
+@login_required
+def handle_post_delete(p_uuid, p_uri):
+    '''
+    Defines Flask route to delete a Post from database
+
+    Methods: POST
+    '''
+
+    post = Post.query.filter_by(uuid=p_uuid, uri=p_uri).first()
+
+    if post:
+        db.session.delete(post)
+        db.session.commit()
+        return "Sucess!", 200
+    return "Error", 404
+
+
 @post_bp.route("/posts/<p_uuid>/<p_uri>/reply/", methods=['PUT'])
 def handle_reply_vote(p_uuid, p_uri):
     '''
