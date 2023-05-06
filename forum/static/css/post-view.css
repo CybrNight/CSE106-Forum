@@ -124,11 +124,11 @@ a:hover{
 }
 
 .fa-thumbs-down:hover{
-  color: royalblue;
+  color:cornflowerblue;
 }
 
 .fa-trash:hover{
-  color:indianred;
+  color:tomato;
 }
 
 .upvote {
@@ -136,7 +136,7 @@ a:hover{
 }
 
 .downvote {
-  color: royalblue;
+  color: cornflowerblue;
 }
 
 .post-metric h3 {
@@ -218,12 +218,7 @@ main {
 
 .reply-container .reply-author {
   size: 10in;
-  color: rgb(238, 95, 95);
-}
-
-.reply-container h2 {
-  size: 10in;
-  color: rgb(238, 95, 95);
+  color:rgb(139, 89, 189);
 }
 
 .reply-metric .fa {
