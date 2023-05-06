@@ -1,55 +1,64 @@
-{% extends "base-new.html" %} {$ block content %} {% block head %} {{super()}}
+{% extends "base-new.html" %} {% block content %} {% block head %} {{super()}}
 <script src="{{ url_for('static',filename='js/postView.js') }}"></script>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/post-view.css') }}"
-/>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/alerts.css') }}"
-/>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/base-new.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/post-view.css') }}" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+{% endblock %}
 <script>
   const post = JSON.parse('{{ data | tojson | replace("\\", "\\\\") }}');
 </script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <div class="post-container">
   <article>
     <!--This header should be left-aligned-->
     <h1 id="post-title">{{data.title}}</h1>
     <p id="post-content">{{data.content}}</p>
   </article>
-  <div class="post-metric">  
+  <div class="post-metric">
+    {% set url = url_for('auth_bp.login', next=request.path) %}
+    {% if not current_user.is_authenticated %}
+    <a href="{{ url }}" id="post-upvote" class="fa fa-thumbs-up"></a>
+    <a href="{{ url }}" id="post-downvote" class="fa fa-thumbs-down"></a>
+    {% else %}
     <button id="post-upvote" class="fa fa-thumbs-up"></button>
     <button id="post-downvote" class="fa fa-thumbs-down"></button>
-    <h3 class="post-votes">Votes:<span id="post-vote-count">{{data.votes}}</span></div>
+    {% endif %}
+    <h3 class="post-votes">
+      Votes:<span id="post-vote-count">{{data.votes}}</span>
+    </h3>
+  </div>
   <main>
     <div class="post-replies-container">
-      {% with messages = get_flashed_messages(with_categories=true) %} {% for
-      category, message in messages %}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
       <div class="{{ category }}">{{ message }}</div>
       {% endfor %} {% endwith %}
-      <form
-        class="post-reply-form"
-        method="post"
-        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_title=data.title)}}"
-      >
+      <form class="post-form" method="post"
+        action="{{ url_for('post_bp.add_post_reply', p_uuid=data.uuid, p_uri=data.uri)}}">
         <br />
         <div class="field">
           <div class="control">
-            <h3>Post a reply</h1>
-            <textarea name="reply-content" cols="120" rows="5"></textarea>
+            <h3>Post a reply</h3>
+            <textarea id="textarea-post-reply" , name="reply-content" cols="120" rows="5"></textarea>
           </div>
         </div>
-        <button class="button is-block is-info is-large is-fullwidth">
+        <button id="btn-post-reply" class="button is-block is-info is-large is-fullwidth">
           Add Reply
         </button>
       </form>
       <!--This reverse broke before. Keep checking this-->
       {% for reply in data.replies|reverse %}
-      <div class="reply-container">
+      <div class="reply-container" id="reply-{{ reply.uuid }}">
         <!--NEED TO ADD URL TO USER PROFILE-->
-        <h2 class="reply-author"><a href="/">{{reply.author}}</a></h2>
-        <h4 class="reply-votes">Votes: <span>{{reply.votes}}</span></h4>
+        <h2 class="reply-author">{{reply.author}}</h2>
+        <div class="reply-metric">
+          <h3 class="reply-votes">
+            Votes:<span id="reply-vote-count-{{reply.uuid}}">{{reply.votes}}</span>
+          </h3>
+          <button id="btn-upvote-{{ reply.uuid }}" onclick="upvoteReply('{{ reply.uuid }}', post.uri)"
+            class="fa fa-thumbs-up {{'upvote' if reply['voteType'] =='UP' }}"></button>
+          <button id="btn-downvote-{{ reply.uuid }}" onclick="downvoteReply('{{ reply.uuid }}', post.uri)"
+            class="fa fa-thumbs-down {{'downvote' if reply['voteType'] =='DOWN' }}"></button>
+        </div>
         <p>{{reply.content}}</p>
       </div>
       {% endfor %}

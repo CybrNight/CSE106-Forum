@@ -20,10 +20,17 @@ class User(UserMixin, db.Model):
                                    lazy="joined",
                                    cascade='all, delete-orphan')
 
+    # Create relationship between User and their upvotes/downvotes
     post_votes = db.relationship("PostVote",
                                  back_populates="user",
                                  lazy="joined",
                                  cascade='all, delete-orphan')
+
+    # Create relationship between User and their reply votes
+    reply_votes = db.relationship("ReplyVote",
+                                  back_populates="user",
+                                  lazy="joined",
+                                  cascade='all, delete-orphan')
 
     posts = db.relationship("Post",
                             lazy="subquery",
