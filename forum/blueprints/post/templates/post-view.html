@@ -43,7 +43,7 @@
   <div class="post-metric">
     {% set url = url_for('auth_bp.login', next=request.path) %}
     <h3 class="post-votes">
-      <span class="{{'upvote' if data['votes'] > 0 else 'downvote'}}" id="post-vote-count">{{data.votes}}</span>
+      <span class="{{'upvote' if data['votes'] >= 0 else 'downvote'}}" id="post-vote-count">{{data.votes}}</span>
     </h3>
     {% if not current_user.is_authenticated %}
     <a href="{{ url }}" id="post-upvote" class="fa fa-thumbs-up"></a>
@@ -82,7 +82,7 @@
         <!--NEED TO ADD URL TO USER PROFILE-->
         <div class="reply-metric">
           <h3 class="reply-votes">
-            <span class="{{'upvote' if reply['votes'] > 0 else 'downvote'}}"
+            <span class="{{'upvote' if reply['votes'] >= 0 else 'downvote'}}"
               id="reply-vote-count-{{reply.uuid}}">{{reply.votes}}</span>
           </h3>
           {% if not current_user.is_authenticated %}
