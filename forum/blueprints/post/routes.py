@@ -300,13 +300,14 @@ def submit_post():
         # Get the reply content from the form
         title = bleach.clean(request.form.get("post-title"), strip=True)
         content = bleach.clean(request.form.get('post-content'), strip=True)
+        tag = request.form.get('post-tag')
 
         if len(title) == 0 or len(content) == 0:
             return "Post content and title cannot be empty", 409
 
         # Create new Reply object, and add new PostReply to the database
         post = Post(title=title, content=content)
-        tag = Tag(choice(list(TagType)))
+        tag = Tag(TagType(tag))
         post.tags.append(tag)
         current_user.posts.append(post)
 
