@@ -29,13 +29,13 @@ def create_app():
     login_manager.session_protection = "strong"
     login_manager.init_app(app)
 
-    from .admin_views import UserView
+    from .admin_views import UserView, PostView, ReplyView
     from .models import Post, Reply, User
 
     admin_views = Admin(app, name="Dashboard", index_view=UserView(
         User, db.session, url='/admin', endpoint='admin'))
-    admin_views.add_view(ModelView(Post, db.session))
-    admin_views.add_view(ModelView(Reply, db.session))
+    admin_views.add_view(PostView(Post, db.session))
+    admin_views.add_view(ReplyView(Reply, db.session))
 
     @ login_manager.user_loader
     def load_user(uuid):
