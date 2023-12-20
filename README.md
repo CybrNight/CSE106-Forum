@@ -5,6 +5,8 @@ Forum for students to ask questions and receive answers on various topics
 
 ## Technologies
 - Python
+- JavaScript
+- HTML/CSS
 - Flask
 - SQLite3
 
